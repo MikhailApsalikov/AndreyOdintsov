@@ -1,6 +1,8 @@
 ﻿namespace Entities
 {
-	public class EvaluationValue
+	using Selp.Interfaces;
+
+	public class EvaluationValue : ISelpEntity<int>
 	{
 		public int Id { get; set; }
 		public int? Competency { get; set; }

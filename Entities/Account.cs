@@ -2,8 +2,9 @@
 {
 	using System.Collections.Generic;
 	using Enums;
+	using Selp.Interfaces;
 
-	public class Account
+	public sealed class Account : ISelpEntity<int>
 	{
 		public Account()
 		{
@@ -31,10 +32,10 @@
 		public string ManagerFullName { get; set; }
 		public double? LastEvaluationPercent { get; set; }
 
-		public virtual ICollection<Evaluation> Evaluations { get; set; }
-		public virtual ICollection<Evaluation> EvaluationsReviews { get; set; }
-		public virtual ICollection<Account> Team { get; set; }
-		public virtual Account Manager { get; set; }
-		public virtual ICollection<Evaluation> EvaluationsManages { get; set; }
+		public ICollection<Evaluation> Evaluations { get; set; }
+		public ICollection<Evaluation> EvaluationsReviews { get; set; }
+		public ICollection<Account> Team { get; set; }
+		public Account Manager { get; set; }
+		public ICollection<Evaluation> EvaluationsManages { get; set; }
 	}
 }

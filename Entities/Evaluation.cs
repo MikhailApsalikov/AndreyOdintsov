@@ -2,8 +2,9 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using Selp.Interfaces;
 
-	public class Evaluation
+	public sealed class Evaluation : ISelpEntity<int>
 	{
 		public Evaluation()
 		{
@@ -21,11 +22,11 @@
 		public double? ManagerResult { get; set; }
 		public DateTime? ManagerReviewed { get; set; }
 
-		public virtual Account Examinee { get; set; }
-		public virtual Account Examinier { get; set; }
+		public Account Examinee { get; set; }
+		public Account Examinier { get; set; }
 
-		public virtual ICollection<EvaluationValue> EvaluationValues { get; set; }
+		public ICollection<EvaluationValue> EvaluationValues { get; set; }
 
-		public virtual Account Manager { get; set; }
+		public Account Manager { get; set; }
 	}
 }
