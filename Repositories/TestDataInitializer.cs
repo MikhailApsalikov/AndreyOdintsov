@@ -31,7 +31,7 @@ namespace Repositories
 				new Account
 				{
 					Login = "admin",
-					Password = "4bf04605086345a609b4bccdc20affb8b51fcb72",
+					Password = "b5398670ef184be522f9c86d67d03ec38d04e705",
 					Salt = "0b07da3c5afa7ff09fb2c2ff3514a5f1ef6888c2",
 					Active = true,
 					Code = "1",
