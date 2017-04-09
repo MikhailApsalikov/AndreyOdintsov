@@ -12,11 +12,5 @@ namespace Odintsov.Accounts.Web.Models
         public string MicroRegion { get; set; }
         public string Department { get; set; }
         public string Position { get; set; }
-
-        public string ToJson(bool urlEncode = true)
-        {
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            return urlEncode ? HttpUtility.UrlEncode(js.Serialize(this)) : js.Serialize(this);
-        }
     }
 }

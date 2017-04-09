@@ -35,7 +35,7 @@ namespace Odintsov.Accounts.Web.Controllers
         public ActionResult LogOn(LogOnModel model)
         {
             Account account = db.Accounts.FirstOrDefault(x => x.Login.ToLower() == model.Login.ToLower());
-
+			
             if (account == null)
             {
 				ModelState.AddModelError("", "Логин не найден.");
@@ -53,7 +53,7 @@ namespace Odintsov.Accounts.Web.Controllers
 				ModelState.AddModelError("", "Неправильный пароль.");
 				return View(model);
             }
-
+			
             FormsAuthentication.RedirectFromLoginPage(account.Login, true);
             return RedirectToAction("Index", "Home");
         }
