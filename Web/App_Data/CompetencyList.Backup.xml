@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+	Правила заполнения данного файла:
+	1. Корневой элемент - CompetencyList. Не изменять.
+	2. CompetencyList содержит список компетенций - элементы Сompetency.
+	3. Элемент Сompetency ДОЛЖЕН иметь аттрибуты "Id" и "Title". Аттрибут Id ДОЛЖЕН быть уникален среди компетенций.
+	4. Каждый элемент Сompetency содержит список индикаторов - элемент Indicator.
+	5. Элемент Indicator ДОЛЖЕН иметь те же аттрибуты, что и Competency.
+	6. Каждый элемент Indicator ДОЛЖЕН иметь 3 вложенных элемента: LessThanExpectations, EqualsToExpectations и
+	   MoreThanExpectations - ниже ожиданий, соответствует им и выше ожиданий соответственно.
+	7. НИЧЕГО НЕ УДАЛЯТЬ, иначе пройденные сотрудниками компетенции могут быть утеряны. Вместо удаления,
+	   для компетенций и индикаторов предусмотрен аттрибут "Enabled", значение которого следует установить ="false"
+-->
+<CompetencyList>
+	<Сompetency Id="1" Title="Ориентация на результат" Enabled="true">
+		<Indicator Id="1" Title="Многозадачность" Enabled="true">
+			<LessThanExpectations>
+				Определяя приоритетность задач/каналов коммуникации допускает критические ошибки.
+				Работа с несколькими задачами одновременно успешна только при  постоянном контроле со стороны руководителя.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Чаще всего эффективно распределяет приоритетность задач/каналов коммуникации.
+				Одновременная работа по нескольким задачам требует текущего контроля со стороны руководителя.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Эффективно распределяет приоритетность задач/каналов коммуникации.
+				Результативно работает по нескольким задачам одновременно без контроля со стороны руководителя.
+			</MoreThanExpectations>
+		</Indicator>
+		<Indicator Id="2" Title="Управление временем" Enabled="true">
+			<LessThanExpectations>
+				Систематически затягивает выполнение задач средней сложности, в работе допускает большое количество ошибок, в том числе критических.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Работает над задачами средней сложности оперативно, в большинстве случаев завершает их в установленный срок. Не допускает критических ошибок.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Завершает задачи средней сложности оперативно, в установленный срок или быстрее. Выполняет задачи с минимальным количеством ошибок.
+			</MoreThanExpectations>
+		</Indicator>
+		<Indicator Id="3" Title="Эффективность" Enabled="true">
+			<LessThanExpectations>
+				С трудом решает задачи средней сложности. При выборе способа решения задачи исходит только из собственного удобства.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Уверенно решает задачи средней сложности.В основном использует готовые решения.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Уверенно решает сложные задачи. Находит/создает эффективные решения.
+			</MoreThanExpectations>
+		</Indicator>
+		<Indicator Id="4" Title="Ответственность" Enabled="true">
+			<LessThanExpectations>
+				Работает только в рамках высказанной заказчиком потребности. Перекладывает ответственность за результат на коллег или обстоятельства.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Прикладывает усилия, что бы удовлетворить заявленные потребности заказчика. Часто уходит от прямой ответственности за результат/делит его с коллегами.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Выявляет потребности заказчика и прикладывает максимальные усилия чтобы их удовлетворить. Принимает на себя полную ответственность за конечный результат.
+			</MoreThanExpectations>
+		</Indicator>
+	</Сompetency>
+	<Сompetency Id="2" Title="Навык коммуникации" Enabled="true">
+		<Indicator Id="5" Title="Структурированность мысли" Enabled="true">
+			<LessThanExpectations>
+				Излагает мысли путанно, с трудом их формулирует устно или письменно.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Последовательно излагает информацию устно и письменно, может испытывать сложности с формулированием новых мыслей или идей.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Находит точные формулировки для выражения своих мыслей, последовательно излагает их устно и письменно.
+			</MoreThanExpectations>
+		</Indicator>
+		<Indicator Id="6" Title="Аргументация" Enabled="true">
+			<LessThanExpectations>
+				Не придает значения убедительности аргументов.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Иногда затрудняется с поиском аргументов, убедительных для целевой аудитории (коллеги/заказчики). В процессе общения пытается построить партнерские отношения, но не всегда успешен.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Находит аргументы, убедительные для целевой аудитории (коллеги/заказчики). В процессе общения выстраивает партнерские отношения.
+			</MoreThanExpectations>
+		</Indicator>
+		<Indicator Id="7" Title="Обратная связь" Enabled="true">
+			<LessThanExpectations>
+				Не дает обратной связи по поставленной задаче, ожидает запроса. При возникновении критических проблем, нарушении сроков, избегает контакта.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Предоставляет обратную связь по завершении задачи. При возникновении второстепенных проблем, нарушении сроков информирует только в крайнем случае.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				При выполнении задачи предоставляет промежуточную обратную связь. При возникновении проблем, задержек - немедленно информирует, предлагая варианты решения.
+			</MoreThanExpectations>
+		</Indicator>
+	</Сompetency>
+	<Сompetency Id="3" Title="Мотивация" Enabled="true">
+		<Indicator Id="8" Title="Готовность к развитию" Enabled="true">
+			<LessThanExpectations>
+				Использует ограниченный круг знаний и навыков, позволяющий решать  узкий круг задач. Не растет профессионально.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Развивает профессиональные знания и навыки, позволящие решить большинство поставленных задач.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Постоянно развивает профессиональные знания и навыки, позволяющие решить большинство сложных задач.
+			</MoreThanExpectations>
+		</Indicator>
+		<Indicator Id="9" Title="Мотивация/Лояльность" Enabled="true">
+			<LessThanExpectations>
+				Относится к работе формально, стремится выполнять минимум задач.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Настроен на работу в компании, старается оправдывать ожидания руководителя.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Настроен на рост в рамках компании, прилагает усилия что бы превосходить ожидания руководителя и коллег.
+			</MoreThanExpectations>
+		</Indicator>
+	</Сompetency>
+	<Сompetency Id="4" Title="Готовность к изменениям" Enabled="true">
+		<Indicator Id="10" Title="Готовность к изменеиям" Enabled="true">
+			<LessThanExpectations>
+				Неспособен адаптироваться к изменившимся условиям, корректирует решения и планы только после давления со стороны руководства.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Адаптирует поведение в соответствии с изменившейся ситуацией, корректирует ранее принятые решения и планы с учетом новых данных.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Адаптирует поведение с учетом ожидаемого развития ситуации, корректирует ранее принятые решения и планы, предупреждая возникающие риски.
+			</MoreThanExpectations>
+		</Indicator>
+		<Indicator Id="11" Title="Лидерство" Enabled="true">
+			<LessThanExpectations>
+				Избегает делиться знаниями.
+			</LessThanExpectations>
+			<EqualsToExpectations>
+				Делится знаниями с коллегами, берет на себя ответственность за коллективный результат.
+			</EqualsToExpectations>
+			<MoreThanExpectations>
+				Охотно делится знаниями с коллегами, берет на себя ответственность за коллективный результат.
+			</MoreThanExpectations>
+		</Indicator>
+	</Сompetency>
+
+</CompetencyList>

@@ -1,0 +1,43 @@
+﻿table tr > td {
+    font-size: 0.8em;
+}
+
+table tr > th {
+    font-size: 0.9em;
+}
+
+dt, label {
+    color: #777;
+    font-weight: 500;
+}
+
+dt::after, label.col-md-2::after {
+    content: ':';
+}
+
+label.sum::after {
+    content: '';
+}
+
+.chart-container {
+    align-content: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.chart-container.chart-radar {
+    max-width: 500px;
+}
+
+.chart-container.chart-bar {
+    max-width: 500px;
+}
+
+#filter .form-group {
+    padding: 5px 0 10px;
+}
+
+#filter .form-group > select {
+    max-width: 150px;
+}

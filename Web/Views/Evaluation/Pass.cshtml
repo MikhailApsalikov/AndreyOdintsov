@@ -1,0 +1,97 @@
+﻿@model Odintsov.Accounts.Web.Models.Evaluation
+
+@{
+	ViewBag.Title = "Самостоятельная оценка компетенций сотрудника";
+	var account = ViewBag.CurrentAccount as Odintsov.Accounts.Web.Models.Account;
+	var errors = ViewBag.IndicatorErrors as List<string>;
+	var values = ViewBag.IndicatorValues as Dictionary<string, string>;
+	var competencyList = ViewBag.CompetencyList as Odintsov.Accounts.Web.Models.CompetencyList;
+}
+
+<h2>Самостоятельная оценка компетенций сотрудника</h2>
+<dl class="dl-horizontal">
+	<dt>ФИО, Должность</dt>
+	<dd>@account.FullName, @account.Position</dd>
+
+	<dt>Регион, Отдел</dt>
+	<dd>@account.Region (@account.MicroRegion), @account.Department</dd>
+</dl>
+
+<h5 class="text-danger">@((errors != null && errors.Count > 0) ? "Недопустимые значения оценки" : "")</h5>
+
+<form method="post">
+	@Html.AntiForgeryToken()
+	<div class="form-horizontal">
+		@foreach (var competency in competencyList.Competencies.Where(c => c.Enabled))
+		{
+		<h4>Компетенция: @competency.Title</h4>
+		<table class="table">
+			<tr class="info">
+				<th>Индикатор</th>
+				<th>Не соответствует ожиданиям (1 балл)</th>
+				<th>Соответствует ожиданиям (2 балла)</th>
+				<th>Превосходит ожидания (3 балла)</th>
+				<th>Оценка</th>
+			</tr>
+			@foreach (var indicator in competency.Indicators.Where(i => i.Enabled))
+			{
+			<tr>
+				<td>@indicator.Title</td>
+				<td>@indicator.LessThanExpectations</td>
+				<td>@indicator.EqualsToExpectations</td>
+				<td>@indicator.MoreThanExpectations</td>
+				<td>
+					@{ var name = "indicator_" + competency.Id + "_" + indicator.Id; }
+					<input name="@name" type="number" min="1" max="3" step="0.5" style="min-width:75px"
+						   class="form-control @(errors.Contains(name) ? "alert-danger" : "")"
+						   value="@(values.Keys.Contains(name) ? values[name].Replace(',', '.') : "2")" />
+				</td>
+			</tr>
+			}
+			<tr>
+				<td colspan="4">
+					<strong class="pull-right">Итого (макс. @(competency.Indicators.Where(i => i.Enabled).ToList().Count * 3)):</strong>
+				</td>
+				<td>
+					<label class="sum"></label>
+				</td>
+			</tr>
+		</table>
+		}
+
+		<hr />
+		<div class="form-group col-md-10">
+			<input type="submit" value="Готово" class="btn btn-default" />
+		</div>
+	</div>
+</form>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(document).on('keyup change', 'table input[type="number"]', function (e) {
+        var sum = 0,
+			el = e.target,
+			table = $(el).parents('table'),
+			label = $(table).find('label.sum');
+
+        $(el).removeClass('alert-danger');
+
+        $.each($(table).find('input[type="number"]'), function (e, input) {
+            sum += (parseFloat($(input).val()) || 0);
+        });
+
+        $(label).html(sum.toFixed(1));
+    });
+
+    $.each($('table'), function (e, table) {
+        var sum = 0;
+
+        $.each($(table).find('input[type="number"]'), function (e, input) {
+            sum += (parseFloat($(input).val()) || 0);
+        });
+
+        $(table).find('label.sum').html(sum.toFixed(1));
+    });
+</script>

@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "Компетенции и индикаторы";
+}
+
+<h2>Список компетенций и индикаторов</h2>
+
+@using (Html.BeginForm("CompetencyList", "Home", null, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+		<hr />
+        <h4>Правила заполнения данного файла:</h4>
+		<ol>
+			<li>Корневой элемент - CompetencyList. Не изменять.</li>
+			<li>CompetencyList содержит список компетенций - элементы Сompetency.</li>
+			<li>Элемент Сompetency ДОЛЖЕН иметь аттрибуты "Id" и "Title". Аттрибут Id ДОЛЖЕН быть уникален среди компетенций.</li>
+			<li>Каждый элемент Сompetency содержит список индикаторов - элемент Indicator.</li>
+			<li>Элемент Indicator ДОЛЖЕН иметь те же аттрибуты, что и Competency.</li>
+			<li>Каждый элемент Indicator ДОЛЖЕН иметь 3 вложенных элемента: LessThanExpectations, EqualsToExpectations и MoreThanExpectations - ниже ожиданий, соответствует им и выше ожиданий соответственно.</li>
+			<li>НИЧЕГО НЕ УДАЛЯТЬ, иначе заполненные сотрудниками оценки могут быть утеряны. Вместо удаления, для компетенций и индикаторов предусмотрен аттрибут "Enabled", значение которого следует установить в "false"</li>
+		</ol>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+		<div class="form-group">
+			<div class="col-md-10">
+				<input type="submit" value="Сохранить" class="btn btn-default" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="xml" class="control-label">Редактирование компетенций</label>
+			<div id="xmlEdit"></div>
+		</div>
+
+		<div class="form-group">
+			<label for="xml" class="control-label">CompetencyList.xml</label>
+			<textarea style="min-height:400px" name="xml" id="xml" class="form-control">@ViewBag.CompetencyList</textarea>
+		</div>
+	</div>
+}
+
+<link rel="stylesheet" href="~/Content/xonomy.css" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/xonomy.js"></script>
+
+<script>
+	$(document).ready(function () {
+		var editor = document.getElementById("xmlEdit");
+		var input = document.getElementById("xml");
+
+		Xonomy.setMode("laic");
+		Xonomy.render($(input).text(), editor, {
+			onchange: function () {
+				input.value = Xonomy.harvest();
+			},
+			validate: function (a) {return true},
+			elements: {
+				"CompetencyList": {
+					menu: [{
+						caption: "Добавить компетенцию",
+						action: Xonomy.newElementChild,
+						actionParameter: "<Сompetency Id='1' Title='Заголовок' Enabled='true'></Сompetency>"
+					}]
+				},
+				"Сompetency": {
+					isReadOnly: function(jsMe) {return false},
+					menu: [{
+						caption: "Добавить индикатор",
+						action: Xonomy.newElementChild,
+						actionParameter: "<Indicator Id='1' Title='Заголовок' Enabled='true'><LessThanExpectations></LessThanExpectations><EqualsToExpectations></EqualsToExpectations><MoreThanExpectations></MoreThanExpectations></Indicator>",
+					}],
+					attributes: {
+						"Id": { asker: Xonomy.askString },
+						"Title": { asker: Xonomy.askString },
+						"Enabled": {
+							asker: Xonomy.askPicklist,
+							askerParameter: ["true", "false"]
+						}
+					},
+					hasText: false
+				},
+				"Indicator": {
+					attributes: {
+						"Id": { asker: Xonomy.askString },
+						"Title": { asker: Xonomy.askString },
+						"Enabled": {
+							asker: Xonomy.askPicklist,
+							askerParameter: ["true", "false"]
+						}
+					},
+					hasText: false
+				},
+				"LessThanExpectations": {
+					hasText: true
+				},
+				"EqualsToExpectations": {
+					hasText: true
+				},
+				"MoreThanExpectations": {
+					hasText: true
+				}
+			}
+		});
+		input.value = Xonomy.harvest();
+	});
+</script>
+
