@@ -1,5 +1,4 @@
-﻿using Odintsov.Accounts.Web.Models;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -12,6 +11,7 @@ namespace Web.Controllers
 	[Authorize]
     public class HomeController : Controller
     {
+		/*
         private AccountsContainer db = new AccountsContainer();
 
         // GET: Home
@@ -54,6 +54,6 @@ namespace Web.Controllers
 
 			System.IO.File.WriteAllText(Server.MapPath("~/App_Data/CompetencyList.xml"), text);
 			return RedirectToAction("Index", "Home");
-		}
+		}*/
 	}
 }

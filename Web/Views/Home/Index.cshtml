@@ -1,10 +1,10 @@
-﻿@model Odintsov.Accounts.Web.Models.Account
+﻿@model AccountModel
 
 @{ 
     ViewBag.Title = "Мой профиль";
-    var competencyList = ViewBag.CompetencyList as List<Odintsov.Accounts.Web.Models.Competency>;
+    var competencyList = ViewBag.CompetencyList as List<Competency>;
     var lastReviewedEvaluation = Model.GetLastReviewedEvaluation();
-    var principal = ViewBag.Principal as Odintsov.Accounts.Web.Models.Account;
+    var principal = ViewBag.Principal as AccountModel;
     var competencies = lastReviewedEvaluation == null ? new int?[] { } :
             lastReviewedEvaluation.EvaluationValues.GroupBy(k => k.Competency)
                 .Select(g => g.FirstOrDefault().Competency).ToArray();

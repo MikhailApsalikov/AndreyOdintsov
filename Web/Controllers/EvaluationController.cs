@@ -1,5 +1,4 @@
-﻿using Odintsov.Accounts.Web.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,10 +9,11 @@ using System.Xml.Serialization;
 namespace Odintsov.Accounts.Web.Controllers
 {
 	using XmlEntities;
-
+	
 	[Authorize]
     public class EvaluationController : Controller
 	{
+		/*
 		private AccountsContainer db = new AccountsContainer();
 
 		// GET: Evaluation/Details/5
@@ -190,6 +190,6 @@ namespace Odintsov.Accounts.Web.Controllers
 		private void PrepareComtetencyList()
 		{
 			ViewBag.CompetencyList = new CompetencyList(Server.MapPath("~/App_Data/CompetencyList.xml"));
-		}
+		}*/
     }
 }

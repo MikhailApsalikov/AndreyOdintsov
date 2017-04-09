@@ -1,7 +1,7 @@
 ﻿namespace Entities
 {
 	using System.Collections.Generic;
-	using Enums;
+	using Common.Enums;
 	using Selp.Interfaces;
 
 	public sealed class Account : ISelpEntity<int>

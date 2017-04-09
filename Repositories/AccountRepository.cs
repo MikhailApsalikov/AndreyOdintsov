@@ -3,11 +3,12 @@
 	using System.Data.Entity;
 	using System.Linq;
 	using Entities;
+	using Interfaces;
 	using Selp.Common.Entities;
 	using Selp.Interfaces;
 	using Selp.Repository;
 
-	public class AccountRepository : SelpRepository<Account, int>
+	public class AccountRepository : SelpRepository<Account, int>, IAccountRepository
 	{
 		public AccountRepository(DbContext dbContext, ISelpConfiguration configuration) : base(dbContext, configuration)
 		{
@@ -25,6 +26,11 @@
 		protected override IQueryable<Account> ApplyFilters(IQueryable<Account> entities, BaseFilter filter)
 		{
 			return entities;
+		}
+
+		public Account GetByLogin(string login)
+		{
+			return GetByCustomExpression(a => a.Login == login).FirstOrDefault();
 		}
 	}
 }

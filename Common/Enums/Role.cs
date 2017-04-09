@@ -1,4 +1,4 @@
-﻿namespace Entities.Enums
+﻿namespace Common.Enums
 {
 	public enum Role
 	{
