@@ -7,7 +7,9 @@ using System.Xml.Serialization;
 
 namespace Web.Controllers
 {
-    [Authorize]
+	using XmlEntities;
+
+	[Authorize]
     public class HomeController : Controller
     {
         private AccountsContainer db = new AccountsContainer();

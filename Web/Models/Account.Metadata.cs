@@ -9,7 +9,9 @@ using System.Web;
 
 namespace Odintsov.Accounts.Web.Models
 {
-	[MetadataType(typeof(AccountMetadata))]
+	using global::Models;
+
+	[MetadataType(typeof(AccountModel))]
 	public partial class Account : IUser
     {
         [Display(Name = "Роль")]
@@ -57,52 +59,5 @@ namespace Odintsov.Accounts.Web.Models
             var hash = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(input));
             return string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
         }
-    }
-
-	public class AccountMetadata
-	{
-		[Display(Name = "Таб. номер")]
-		public string Code;
-        
-		[Display(Name = "Логин")]
-        [RegularExpression(@"[a-zA-Z0-9]+")]
-        [Required]
-		public string Login;
-
-		[Display(Name = "ФИО")]
-		public string FullName;
-
-		[Display(Name = "Пол")]
-		public string Sex;
-
-		[Display(Name = "Город")]
-		public string Region;
-
-		[Display(Name = "Макрорегион")]
-		public string MicroRegion;
-
-		[Display(Name = "Отдел(ФН)")]
-		public string Department;
-
-		[Display(Name = "Должность")]
-		public string Position;
-
-        [Display(Name = "Админ. руководитель")]
-        public string Manager;
-
-        [Display(Name = "Активен")]
-		public string Active;
-
-		[Display(Name = "Оценки")]
-		public ICollection<Evaluation> Evaluations;
-
-        [Display(Name = "Роль")]
-        public Role Role;
-
-        [Display(Name = "Ревью как фукнц. рук.")]
-        public ICollection<Evaluation> EvaluationsReviews;
-
-        [Display(Name = "Ревью как админ. рук.")]
-        public ICollection<Evaluation> EvaluationsManages;
     }
 }

@@ -9,6 +9,8 @@ using System.Xml.Serialization;
 
 namespace Odintsov.Accounts.Web.Controllers
 {
+	using XmlEntities;
+
 	[Authorize]
     public class EvaluationController : Controller
 	{

@@ -19,7 +19,10 @@ using System.Text.RegularExpressions;
 
 namespace Odintsov.Accounts.Web.Controllers
 {
-    [Authorize]
+	using global::Models;
+	using XmlEntities;
+
+	[Authorize]
     public class AccountsController : Controller
     {
         private AccountsContainer db = new AccountsContainer();

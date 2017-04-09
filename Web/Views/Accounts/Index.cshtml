@@ -1,4 +1,5 @@
 ﻿@model PagedList.IPagedList<Odintsov.Accounts.Web.Models.Account>
+@using Models
 @using PagedList.Mvc;
 
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
@@ -6,7 +7,7 @@
 @{
     ViewBag.Title = "Список сотрудников";
     var currentAccount = ViewBag.CurrentAccount as Odintsov.Accounts.Web.Models.Account;
-    var filter = ViewBag.Filter as Odintsov.Accounts.Web.Models.AccountsFilter;
+    var filter = ViewBag.Filter as AccountsFilter;
 
     var regions = ViewBag.Regions as List<string>;
     var microRegions = ViewBag.MicroRegions as List<string>;
