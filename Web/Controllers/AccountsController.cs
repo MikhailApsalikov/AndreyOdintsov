@@ -74,7 +74,7 @@
 			{
 				return HttpNotFound();
 			}
-			AccountModel account = ViewBag.Account = Mapper.Map<AccountModel>(entity);
+			ShortAccountModel account = ViewBag.Account = Mapper.Map<ShortAccountModel>(entity);
 			if (account.Login != User.Identity.Name)
 			{
 				if (!User.IsInRole("Admin"))
@@ -95,6 +95,7 @@
 			{
 				return HttpNotFound();
 			}
+			ViewBag.Account = Mapper.Map<ShortAccountModel>(entity);
 			AccountModel account = ViewBag.Account = Mapper.Map<AccountModel>(entity);
 			if (account.Login != User.Identity.Name)
 			{
@@ -107,7 +108,9 @@
 			if (ModelState.IsValid)
 			{
 				account.SetPassword(resetPassword.Password);
-				accountRepository.Update(account.Id, Mapper.Map<Account>(account));
+				entity.Password = account.Password;
+				entity.Salt = account.Salt;
+				accountRepository.Update(entity.Id, entity);
 				if (account.Login == User.Identity.Name)
 				{
 					return RedirectToAction("Index", "Home");

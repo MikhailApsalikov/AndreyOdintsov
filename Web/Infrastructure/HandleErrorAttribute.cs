@@ -18,6 +18,7 @@
 	{
 		public override void OnException(ExceptionContext filterContext)
 		{
+			/*
 			if (!filterContext.ExceptionHandled)
 			{
 				if (filterContext.Exception != null)
@@ -26,6 +27,7 @@
 				}
 				filterContext.ExceptionHandled = true;
 			}
+			*/
 		}
 	}
 }

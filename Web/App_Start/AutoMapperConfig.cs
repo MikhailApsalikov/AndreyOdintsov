@@ -10,7 +10,9 @@
 		{
 			Mapper.Initialize(cfg =>
 			{
-				cfg.CreateMap<AccountModel, Account>().ReverseMap();
+				cfg.CreateMap<AccountModel, Account>()
+					.ForMember(m => m.Manager, s => s.Ignore())
+					.ReverseMap();
 				cfg.CreateMap<Account, ShortAccountModel>();
 			});
 		}
