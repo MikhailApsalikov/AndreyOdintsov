@@ -28,6 +28,8 @@
 
 		[Display(Name = "Логин")] [RegularExpression(@"[a-zA-Z0-9]+")] [Required] public string Login;
 
+		public int? ManagerId { get; set; }
+
 		[Display(Name = "Админ. руководитель")] public string Manager;
 
 		[Display(Name = "Макрорегион")] public string MicroRegion;
@@ -78,15 +80,10 @@
 			return Hash(password + salt);
 		}
 
-		/*
-		public EvaluationModel GetLastReviewedEvaluation()
-		{
-			EvaluationModel evaluation = Evaluations.Where(e => e.Examinier != null && e.Manager != null)
-				.OrderByDescending(e => e.Reviewed).FirstOrDefault();
+		public ShortEvaluationModel LastReviewedEvaluation { get; set; }
 
-			return evaluation;
-		}
-		*/
+		public double? LastEvaluationPercent { get; set; }
+
 
 		public static string Hash(string input)
 		{

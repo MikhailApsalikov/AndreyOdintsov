@@ -1,6 +1,8 @@
 ﻿namespace Entities
 {
 	using System.Collections.Generic;
+	using System.ComponentModel.DataAnnotations.Schema;
+	using System.Linq;
 	using Common.Enums;
 	using Selp.Interfaces;
 
@@ -29,8 +31,13 @@
 		public Role? Role { get; set; }
 		public string Guid { get; set; }
 		public int? ManagerId { get; set; }
-		public string ManagerFullName { get; set; }
+
 		public double? LastEvaluationPercent { get; set; }
+
+		[NotMapped]
+		public Evaluation LastReviewedEvaluation => Evaluations.Where(e => e.Examinier != null && e.Manager != null)
+					.OrderByDescending(e => e.Reviewed)
+					.FirstOrDefault();
 
 		public virtual ICollection<Evaluation> Evaluations { get; set; }
 		public virtual ICollection<Evaluation> EvaluationsReviews { get; set; }

@@ -25,6 +25,7 @@
 			var efConstructorParameter = new InjectionConstructor(dbContext, container.Resolve<ISelpConfiguration>());
 
 			container.RegisterType<IAccountRepository, AccountRepository>(efConstructorParameter);
+			container.RegisterType<IEvaluationRepository, EvaluationRepository>(efConstructorParameter);
 			var locator = new UnityServiceLocator(container);
 			ServiceLocator.SetLocatorProvider(() => locator);
 			config.DependencyResolver = new UnityResolver(container);

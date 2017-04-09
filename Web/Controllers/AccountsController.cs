@@ -16,6 +16,7 @@
 	using System.Web.Security;
 	using AutoMapper;
 	using Common.Enums;
+	using Common.Filters;
 	using Entities;
 	using Interfaces;
 	using Models;
@@ -129,43 +130,21 @@
 			return RedirectToAction("LogOn", "Accounts");
 		}
 
-		/*
+		
 		public ActionResult Index(string sortOrder = "+FullName", string filter = "", int page = 1, int pageSize = 20)
 		{
 			AccountModel currentAccount = Mapper.Map<AccountModel>(accountRepository.GetByLogin(User.Identity.Name));
 			ViewBag.CurrentAccount = currentAccount;
+			var allAccounts = accountRepository.GetAll();
+
+
+			// =======================     Фильтры      =============================
+			AccountsFilter filters = new AccountsFilter(filter, sortOrder, User.Identity.Name);
+			ViewBag.Filter = filters;
+
 			int total;
-			IEnumerable<Account> accounts = accountRepository.GetByFilter(new BaseFilter()
-			{
-				Page = page,
-				PageSize = pageSize,
-				Search = filter,
-				SortDirection = sortOrder[0] == '+' ? ListSortDirection.Ascending : ListSortDirection.Descending,
-				SortField = sortOrder.Substring(1)
-			}, out total);
-
-			if (currentAccount.Team.Count > 0)
-			{
-				IEnumerable<int> teamIds = currentAccount.Team.Select(m => m.Id);
-				accounts = accounts.Where(a => teamIds.Contains(a.Id));
-			}
-
-			if (currentAccount.Role == Role.DepCheef)
-			{
-				if (currentAccount.Team.Count > 0)
-				{
-					accounts =
-						accounts.Union(
-							accountRepository.GetByCustomExpression(
-								a => a.Department == currentAccount.Department && a.Login != User.Identity.Name));
-				}
-				else
-				{
-					accounts = accounts.Where(a => a.Department == currentAccount.Department);
-					accounts = accounts.Where(a => a.Login != User.Identity.Name);
-				}
-			}
-
+			IEnumerable<Account> accounts = accountRepository.GetByFilter(filters, out total);
+			
 			// =======================     Сортировки      =============================
 
 			ViewBag.CodeSortParm = sortOrder != "+Code" ? "+Code" : "-Code";
@@ -184,9 +163,11 @@
 			ViewBag.CurrentSort = sortOrder;
 
 			PropertyInfo propInfo = typeof(Account).GetProperty(sortOrder.Substring(1));
+			IEnumerable<AccountModel> accountModels;
 			if (propInfo == null)
 			{
-				return View(accounts.ToPagedList(page, pageSize));
+				accountModels = Mapper.Map<IEnumerable<AccountModel>>(accounts);
+				return View(accountModels.ToPagedList(page, pageSize));
 			}
 			bool ascending = sortOrder[0] == '+';
 
@@ -226,7 +207,6 @@
 				case "Role":
 					accounts = @ascending ? accounts.OrderBy(s => s.Role) : accounts.OrderByDescending(s => s.Role);
 					break;
-				case "FullName":
 				default:
 					accounts = @ascending
 						? accounts.OrderBy(s => string.IsNullOrEmpty(s.FullName)).ThenBy(s => s.FullName)
@@ -244,55 +224,22 @@
 					break;
 			}
 
-
-			// =======================     Фильтры      =============================
-
-			if (!string.IsNullOrEmpty(filter))
-			{
-				var js = new JavaScriptSerializer();
-				AccountsFilter filters = ViewBag.Filter = js.Deserialize<AccountsFilter>(HttpUtility.UrlDecode(filter));
-
-				if (!string.IsNullOrEmpty(filters.Region))
-				{
-					accounts = accounts.Where(a => a.Region == filters.Region);
-				}
-				if (!string.IsNullOrEmpty(filters.MicroRegion))
-				{
-					accounts = accounts.Where(a => a.MicroRegion == filters.MicroRegion);
-				}
-				if (!string.IsNullOrEmpty(filters.Department))
-				{
-					accounts = accounts.Where(a => a.Department == filters.Department);
-				}
-				if (!string.IsNullOrEmpty(filters.Position))
-				{
-					accounts = accounts.Where(a => a.Position == filters.Position);
-				}
-			}
-			else
-			{
-				ViewBag.Filter = new AccountsFilter();
-			}
-
-
 			// =======================     Данные для фильтров      =============================
 
-			ViewBag.Regions = db.Accounts.GroupBy(a => a.Region)
+			ViewBag.Regions = allAccounts.GroupBy(a => a.Region)
 				.Select(grp => grp.FirstOrDefault().Region).Where(r => !string.IsNullOrEmpty(r)).ToList();
-			ViewBag.MicroRegions = db.Accounts.GroupBy(a => a.MicroRegion)
+			ViewBag.MicroRegions = allAccounts.GroupBy(a => a.MicroRegion)
 				.Select(grp => grp.FirstOrDefault().MicroRegion).Where(m => !string.IsNullOrEmpty(m)).ToList();
-			ViewBag.Departments = db.Accounts.GroupBy(a => a.Department)
+			ViewBag.Departments = allAccounts.GroupBy(a => a.Department)
 				.Select(grp => grp.FirstOrDefault().Department).Where(d => !string.IsNullOrEmpty(d)).ToList();
-			ViewBag.Positions = db.Accounts.GroupBy(a => a.Position)
+			ViewBag.Positions = allAccounts.GroupBy(a => a.Position)
 				.Select(grp => grp.FirstOrDefault().Position).Where(p => !string.IsNullOrEmpty(p)).ToList();
 
-
+			accountModels = Mapper.Map<IEnumerable<AccountModel>>(accounts).ToList();
 			// =======================     График      =============================
-			ViewBag.Percents = accounts.Select(a => a.LastEvaluationPercent).Where(p => p.HasValue).ToList();
-
-			return View(accounts.ToPagedList(page, pageSize));
+			ViewBag.Percents = accountModels.Select(a => a.LastReviewedEvaluation?.Percent).Where(p => p.HasValue).ToList();
+			return View(accountModels.ToPagedList(page, pageSize));
 		}
-		*/
 		
 		/*
 		// GET: Accounts/Details/5

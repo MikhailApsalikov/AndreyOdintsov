@@ -3,13 +3,14 @@
 	using System.Data.Entity;
 	using System.Linq;
 	using Entities;
+	using Interfaces;
 	using Selp.Common.Entities;
 	using Selp.Interfaces;
 	using Selp.Repository;
 
-	internal class EvaluationRepository : SelpRepository<Evaluation, int>
+	public class EvaluationRepository : SelpRepository<Evaluation, int>, IEvaluationRepository
 	{
-		public EvaluationRepository(DbContext dbContext, ISelpConfiguration configuration) : base(dbContext, configuration)
+		public EvaluationRepository(AccountsDbContext dbContext, ISelpConfiguration configuration) : base(dbContext, configuration)
 		{
 		}
 

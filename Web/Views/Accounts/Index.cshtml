@@ -1,12 +1,12 @@
-﻿@model PagedList.IPagedList<Odintsov.Accounts.Web.Models.Account>
-@using Models
+﻿@model PagedList.IPagedList<AccountModel>
+@using Common.Filters
 @using PagedList.Mvc;
 
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Список сотрудников";
-    var currentAccount = ViewBag.CurrentAccount as Odintsov.Accounts.Web.Models.Account;
+    var currentAccount = ViewBag.CurrentAccount as AccountModel;
     var filter = ViewBag.Filter as AccountsFilter;
 
     var regions = ViewBag.Regions as List<string>;
@@ -145,12 +145,12 @@
             @Html.DisplayFor(modelItem => item.Login)
         </td>
         <td title="@Html.DisplayFor(modelItem => item.Role)">
-            @Odintsov.Accounts.Web.Models.RoleMap.Default.GetDisplayName(item.Role)
+            @RoleMap.Default.GetDisplayName(item.Role)
         </td>
-        <td title="@Html.DisplayFor(modelItem => item.Manager.FullName)">
+        <td title="@Html.DisplayFor(modelItem => item.Manager)">
 			@if (item.Manager != null)
 			{
-		        @Html.ActionLink(item.Manager.FullName, "Details", new { Id = item.Manager.Id })
+		        @Html.ActionLink(item.Manager, "Details", new { Id = item.ManagerId })
 			}
         </td>
         <td>

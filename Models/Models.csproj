@@ -34,6 +34,10 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Selp.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selp.Common.1.0.0.3\lib\net461\Selp.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -46,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountModel.cs" />
-    <Compile Include="AccountsFilter.cs" />
+    <Compile Include="ShortEvaluationModel.cs" />
     <Compile Include="EvaluationModel.cs" />
     <Compile Include="EvaluationValueModel.cs" />
     <Compile Include="LogOnModel.cs" />

@@ -7,7 +7,7 @@
 	using Selp.Interfaces;
 	using Selp.Repository;
 
-	internal class EvaluationValueRepository : SelpRepository<EvaluationValue, int>
+	public class EvaluationValueRepository : SelpRepository<EvaluationValue, int>
 	{
 		public EvaluationValueRepository(DbContext dbContext, ISelpConfiguration configuration)
 			: base(dbContext, configuration)
