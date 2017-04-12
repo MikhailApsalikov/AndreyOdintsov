@@ -1,8 +1,8 @@
-﻿@model Odintsov.Accounts.Web.Models.Account
+﻿@model Account
 
 @{
 	ViewBag.Title = "Правка пользователя";
-	var roleSelect = new SelectList(Odintsov.Accounts.Web.Models.RoleMap.Default.GetDisplayRoleMap(), "Key", "Value", Model.Role);
+	var roleSelect = new SelectList(RoleMap.Default.GetDisplayRoleMap(), "Key", "Value", Model.Role);
 }
 
 <h2>Правка пользователя</h2>

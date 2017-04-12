@@ -1,7 +1,6 @@
-﻿namespace Repositories
+﻿namespace Entities
 {
 	using System.Data.Entity;
-	using Entities;
 
 	public class AccountsDbContext : DbContext
 	{

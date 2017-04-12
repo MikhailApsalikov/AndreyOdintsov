@@ -6,19 +6,10 @@
 	using Common;
 	using Common.Enums;
 	using Entities;
-	using Interfaces;
-	using Microsoft.Practices.ServiceLocation;
-	using Selp.Interfaces;
 
 	public class MyRoleProvider : RoleProvider
 	{
-		private readonly ISelpRepository<Account, int> repository;
-
-		public MyRoleProvider()
-		{
-			var locator = ServiceLocator.Current;
-			repository = locator.GetInstance<IAccountRepository>();
-		}
+		private readonly AccountsDbContext db = new AccountsDbContext();
 
 		public override string[] GetAllRoles()
 		{
@@ -29,7 +20,7 @@
 		{
 			string role = RoleMap.Default.GetNameByRole(Role.None);
 
-			Account account = repository.GetByCustomExpression(a => a.Login == username).FirstOrDefault();
+			var account = db.Accounts.FirstOrDefault(a => a.Login == username);
 			if (account != null)
 			{
 				role = RoleMap.Default.GetNameByRole(account.Role);

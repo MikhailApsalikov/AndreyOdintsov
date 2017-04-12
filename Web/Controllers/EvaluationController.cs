@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Xml.Serialization;
-
-namespace Odintsov.Accounts.Web.Controllers
+﻿namespace Odintsov.Accounts.Web.Controllers
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Web.Mvc;
+	using Common.Enums;
+	using Entities;
 	using XmlEntities;
-	
+
 	[Authorize]
-    public class EvaluationController : Controller
+	public class EvaluationController : Controller
 	{
-		/*
-		private AccountsContainer db = new AccountsContainer();
+		private readonly AccountsDbContext db = new AccountsDbContext();
 
 		// GET: Evaluation/Details/5
 
 		public ActionResult Details(int id)
 		{
-           
-            PrepareComtetencyList();
+			PrepareComtetencyList();
 			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
 			Evaluation evaluation = ViewBag.Evaluation = db.Evaluations.Find(id);
 
@@ -31,19 +27,19 @@ namespace Odintsov.Accounts.Web.Controllers
 		// GET: Evaluation/Pass
 		public ActionResult Pass()
 		{
-            Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-            Evaluation lastEvaluation = currentAccount.Evaluations.OrderByDescending(e => e.Passed).FirstOrDefault();
+			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
+			Evaluation lastEvaluation = currentAccount.Evaluations.OrderByDescending(e => e.Passed).FirstOrDefault();
 
-            // Нельзя проходить чаще чем раз в день (на всякий случай).
-            if (lastEvaluation != null && lastEvaluation.Passed.Date == DateTime.Today)
-            {
-                TempData["Error"] = "Нельзя проходить самостоятельную оценку больше раза в день.";
-                return RedirectToAction("Index", "Home");
-            }
+			// Нельзя проходить чаще чем раз в день (на всякий случай).
+			if (lastEvaluation != null && lastEvaluation.Passed.Date == DateTime.Today)
+			{
+				TempData["Error"] = "Нельзя проходить самостоятельную оценку больше раза в день.";
+				return RedirectToAction("Index", "Home");
+			}
 
-            PrepareComtetencyList();
+			PrepareComtetencyList();
 			PrepareIndicatorsForm();
-            
+
 			return View();
 		}
 
@@ -56,15 +52,18 @@ namespace Odintsov.Accounts.Web.Controllers
 			ValidateIndicatorsForm();
 			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
 
-			if (ViewBag.IndicatorErrors.Count > 0) return View();
-
-			Evaluation evaluation = new Evaluation();
-			evaluation.Examinee = currentAccount;
-            evaluation.Passed = DateTime.Now;
-
-            foreach (var kv in ViewBag.IndicatorValues)
+			if (ViewBag.IndicatorErrors.Count > 0)
 			{
-				EvaluationValue evaluationValue = new EvaluationValue();
+				return View();
+			}
+
+			var evaluation = new Evaluation();
+			evaluation.Examinee = currentAccount;
+			evaluation.Passed = DateTime.Now;
+
+			foreach (dynamic kv in ViewBag.IndicatorValues)
+			{
+				var evaluationValue = new EvaluationValue();
 				evaluationValue.Evaluation = evaluation;
 				evaluationValue.Competency = int.Parse(kv.Key.Split('_')[1]);
 				evaluationValue.Indicator = int.Parse(kv.Key.Split('_')[2]);
@@ -73,11 +72,11 @@ namespace Odintsov.Accounts.Web.Controllers
 				evaluation.EvaluationValues.Add(evaluationValue);
 			}
 
-            evaluation.IndicatorsCount = evaluation.EvaluationValues.Count;
-            currentAccount.Evaluations.Add(evaluation);
+			evaluation.IndicatorsCount = evaluation.EvaluationValues.Count;
+			currentAccount.Evaluations.Add(evaluation);
 			db.SaveChanges();
-			
-            return RedirectToAction("Index", "Home");
+
+			return RedirectToAction("Index", "Home");
 		}
 
 		// GET: Evaluation/Review/5  Для начальника отдела
@@ -116,7 +115,10 @@ namespace Odintsov.Accounts.Web.Controllers
 
 			ValidateIndicatorsForm();
 
-			if (ViewBag.IndicatorErrors.Count > 0) return View();
+			if (ViewBag.IndicatorErrors.Count > 0)
+			{
+				return View();
+			}
 
 			if (currentAccount.Role == Role.DepCheef && evaluation.Examinier == null)
 			{
@@ -129,11 +131,11 @@ namespace Odintsov.Accounts.Web.Controllers
 				currentAccount.EvaluationsManages.Add(evaluation);
 			}
 
-			foreach (var kv in ViewBag.IndicatorValues)
+			foreach (dynamic kv in ViewBag.IndicatorValues)
 			{
 				EvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
 					ev => ev.Competency == int.Parse(kv.Key.Split('_')[1]) &&
-						  ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
+					      ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
 
 
 				if (currentAccount.Role == Role.DepCheef && evaluation.Examinier == null)
@@ -146,16 +148,16 @@ namespace Odintsov.Accounts.Web.Controllers
 				}
 			}
 
-            if (currentAccount.Role == Role.DepCheef && evaluation.Examinier == null)
-            {
+			if (currentAccount.Role == Role.DepCheef && evaluation.Examinier == null)
+			{
 				evaluation.Examinier = currentAccount;
-                evaluation.ReviewedResult = evaluation.EvaluationValues.Sum(ev => ev.ReviewValue ?? 0);
-            }
-            else if (currentAccount == examinee.Manager)
-            {
+				evaluation.ReviewedResult = evaluation.EvaluationValues.Sum(ev => ev.ReviewValue ?? 0);
+			}
+			else if (currentAccount == examinee.Manager)
+			{
 				evaluation.Manager = currentAccount;
-                evaluation.ManagerResult = evaluation.EvaluationValues.Sum(ev => ev.ManagerValue ?? 0);
-            }
+				evaluation.ManagerResult = evaluation.EvaluationValues.Sum(ev => ev.ManagerValue ?? 0);
+			}
 
 			if (evaluation.Manager != null && evaluation.Examinier != null)
 			{
@@ -163,12 +165,12 @@ namespace Odintsov.Accounts.Web.Controllers
 			}
 
 			db.SaveChanges();
-			return RedirectToAction("Details", "Accounts", new { id = examinee.Id });
+			return RedirectToAction("Details", "Accounts", new {id = examinee.Id});
 		}
 
-        private void ValidateIndicatorsForm()
+		private void ValidateIndicatorsForm()
 		{
-			foreach (var indicatorKey in Request.Form.AllKeys.Where(i => i.StartsWith("indicator_")))
+			foreach (string indicatorKey in Request.Form.AllKeys.Where(i => i.StartsWith("indicator_")))
 			{
 				double val;
 				bool parsed = double.TryParse(Request.Form[indicatorKey].Replace(".", ","), out val);
@@ -190,6 +192,6 @@ namespace Odintsov.Accounts.Web.Controllers
 		private void PrepareComtetencyList()
 		{
 			ViewBag.CompetencyList = new CompetencyList(Server.MapPath("~/App_Data/CompetencyList.xml"));
-		}*/
-    }
+		}
+	}
 }

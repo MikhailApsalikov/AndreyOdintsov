@@ -2,9 +2,9 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using Selp.Interfaces;
+	using System.Diagnostics.CodeAnalysis;
 
-	public sealed class Evaluation : ISelpEntity<int>
+	public class Evaluation
 	{
 		public Evaluation()
 		{
@@ -22,11 +22,20 @@
 		public double? ManagerResult { get; set; }
 		public DateTime? ManagerReviewed { get; set; }
 
-		public Account Examinee { get; set; }
-		public Account Examinier { get; set; }
+		public virtual Account Examinee { get; set; }
+		public virtual Account Examinier { get; set; }
 
-		public ICollection<EvaluationValue> EvaluationValues { get; set; }
+		[SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+		public virtual ICollection<EvaluationValue> EvaluationValues { get; set; }
 
-		public Account Manager { get; set; }
+		public virtual Account Manager { get; set; }
+
+		public double? GetPercent()
+		{
+			// Формула подсчета результата в процентах: (X - Xmin) * 100 / (Xmax - Xmin). 
+			// X - это (ReviewedResult + ManagerResult) / 2, Xmin - IndicatorsCount, Xmax - IndicatorsCount * 3
+			// Умножаем на 120 т.к. по ТЗ максимальный балл - это 120%.
+			return ((ReviewedResult + ManagerResult) / 2 - IndicatorsCount) * 120 / (IndicatorsCount * 2);
+		}
 	}
 }

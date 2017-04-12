@@ -2,7 +2,6 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel;
 	using System.Data.Entity;
 	using System.IO;
 	using System.Linq;
@@ -14,25 +13,17 @@
 	using System.Web.Mvc;
 	using System.Web.Script.Serialization;
 	using System.Web.Security;
-	using AutoMapper;
 	using Common.Enums;
 	using Common.Filters;
 	using Entities;
-	using Interfaces;
 	using Models;
 	using PagedList;
-	using Selp.Common.Entities;
 	using XmlEntities;
 
 	[Authorize]
 	public class AccountsController : Controller
 	{
-		private readonly IAccountRepository accountRepository;
-
-		public AccountsController(IAccountRepository accountRepository)
-		{
-			this.accountRepository = accountRepository;
-		}
+		private readonly AccountsDbContext db = new AccountsDbContext();
 
 		[AllowAnonymous]
 		public ActionResult LogOn()
@@ -44,7 +35,8 @@
 		[AllowAnonymous]
 		public ActionResult LogOn(LogOnModel model)
 		{
-			Account account = accountRepository.GetByLogin(model.Login);
+			Account account = db.Accounts.FirstOrDefault(x => x.Login.ToLower() == model.Login.ToLower());
+
 			if (account == null)
 			{
 				ModelState.AddModelError("", "Логин не найден.");
@@ -57,8 +49,7 @@
 				return View(model);
 			}
 
-			var accountModel = Mapper.Map<AccountModel>(account);
-			if (AccountModel.GetPasswordHash(model.Password, account.Salt) != account.Password)
+			if (account.GetPasswordHash(model.Password) != account.Password)
 			{
 				ModelState.AddModelError("", "Неправильный пароль.");
 				return View(model);
@@ -70,12 +61,11 @@
 
 		public ActionResult ResetPassword(int id)
 		{
-			Account entity = accountRepository.GetById(id);
-			if (entity == null)
+			Account account = ViewBag.Account = db.Accounts.Find(id);
+			if (account == null)
 			{
 				return HttpNotFound();
 			}
-			ShortAccountModel account = ViewBag.Account = Mapper.Map<ShortAccountModel>(entity);
 			if (account.Login != User.Identity.Name)
 			{
 				if (!User.IsInRole("Admin"))
@@ -91,13 +81,11 @@
 		[ValidateAntiForgeryToken]
 		public ActionResult ResetPasswordPost(int id, ResetPassword resetPassword)
 		{
-			Account entity = accountRepository.GetById(id);
-			if (entity == null)
+			Account account = ViewBag.Account = db.Accounts.Find(id);
+			if (account == null)
 			{
 				return HttpNotFound();
 			}
-			ViewBag.Account = Mapper.Map<ShortAccountModel>(entity);
-			AccountModel account = ViewBag.Account = Mapper.Map<AccountModel>(entity);
 			if (account.Login != User.Identity.Name)
 			{
 				if (!User.IsInRole("Admin"))
@@ -109,14 +97,12 @@
 			if (ModelState.IsValid)
 			{
 				account.SetPassword(resetPassword.Password);
-				entity.Password = account.Password;
-				entity.Salt = account.Salt;
-				accountRepository.Update(entity.Id, entity);
+				db.SaveChanges();
 				if (account.Login == User.Identity.Name)
 				{
 					return RedirectToAction("Index", "Home");
 				}
-				return RedirectToAction("Details", new { id = account.Id });
+				return RedirectToAction("Details", new {id = account.Id});
 			}
 
 			return View();
@@ -124,27 +110,39 @@
 
 		public ActionResult LogOff()
 		{
-			ViewBag.CurrentAccount = Mapper.Map<AccountModel>(accountRepository.GetByLogin(User.Identity.Name));
+			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
 
 			FormsAuthentication.SignOut();
 			return RedirectToAction("LogOn", "Accounts");
 		}
 
-		
+		// GET: Accounts
 		public ActionResult Index(string sortOrder = "+FullName", string filter = "", int page = 1, int pageSize = 20)
 		{
-			AccountModel currentAccount = Mapper.Map<AccountModel>(accountRepository.GetByLogin(User.Identity.Name));
-			ViewBag.CurrentAccount = currentAccount;
-			var allAccounts = accountRepository.GetAll();
+			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
 
+			IQueryable<Account> accounts = from a in db.Accounts select a;
 
-			// =======================     Фильтры      =============================
-			AccountsFilter filters = new AccountsFilter(filter, sortOrder, User.Identity.Name);
-			ViewBag.Filter = filters;
+			if (currentAccount.Team.Count > 0)
+			{
+				IEnumerable<int> teamIds = currentAccount.Team.Select(m => m.Id);
+				accounts = accounts.Where(a => teamIds.Contains(a.Id));
+			}
 
-			int total;
-			IEnumerable<Account> accounts = accountRepository.GetByFilter(filters, out total);
-			
+			if (currentAccount.Role == Role.DepCheef)
+			{
+				if (currentAccount.Team.Count > 0)
+				{
+					accounts = accounts.Union(db.Accounts
+						.Where(a => a.Department == currentAccount.Department && a.Login != User.Identity.Name));
+				}
+				else
+				{
+					accounts = accounts.Where(a => a.Department == currentAccount.Department);
+					accounts = accounts.Where(a => a.Login != User.Identity.Name);
+				}
+			}
+
 			// =======================     Сортировки      =============================
 
 			ViewBag.CodeSortParm = sortOrder != "+Code" ? "+Code" : "-Code";
@@ -162,12 +160,10 @@
 				: "-LastEvaluationPercent";
 			ViewBag.CurrentSort = sortOrder;
 
-			PropertyInfo propInfo = typeof(Account).GetProperty(sortOrder.Substring(1));
-			IEnumerable<AccountModel> accountModels;
+			PropertyInfo propInfo = typeof (Account).GetProperty(sortOrder.Substring(1));
 			if (propInfo == null)
 			{
-				accountModels = Mapper.Map<IEnumerable<AccountModel>>(accounts);
-				return View(accountModels.ToPagedList(page, pageSize));
+				return View(accounts.ToPagedList(page, pageSize));
 			}
 			bool ascending = sortOrder[0] == '+';
 
@@ -207,6 +203,7 @@
 				case "Role":
 					accounts = @ascending ? accounts.OrderBy(s => s.Role) : accounts.OrderByDescending(s => s.Role);
 					break;
+				case "FullName":
 				default:
 					accounts = @ascending
 						? accounts.OrderBy(s => string.IsNullOrEmpty(s.FullName)).ThenBy(s => s.FullName)
@@ -224,24 +221,55 @@
 					break;
 			}
 
+
+			// =======================     Фильтры      =============================
+
+			if (!string.IsNullOrEmpty(filter))
+			{
+				var js = new JavaScriptSerializer();
+				AccountsFilter filters = ViewBag.Filter = js.Deserialize<AccountsFilter>(HttpUtility.UrlDecode(filter));
+
+				if (!string.IsNullOrEmpty(filters.Region))
+				{
+					accounts = accounts.Where(a => a.Region == filters.Region);
+				}
+				if (!string.IsNullOrEmpty(filters.MicroRegion))
+				{
+					accounts = accounts.Where(a => a.MicroRegion == filters.MicroRegion);
+				}
+				if (!string.IsNullOrEmpty(filters.Department))
+				{
+					accounts = accounts.Where(a => a.Department == filters.Department);
+				}
+				if (!string.IsNullOrEmpty(filters.Position))
+				{
+					accounts = accounts.Where(a => a.Position == filters.Position);
+				}
+			}
+			else
+			{
+				ViewBag.Filter = new AccountsFilter();
+			}
+
+
 			// =======================     Данные для фильтров      =============================
 
-			ViewBag.Regions = allAccounts.GroupBy(a => a.Region)
+			ViewBag.Regions = db.Accounts.GroupBy(a => a.Region)
 				.Select(grp => grp.FirstOrDefault().Region).Where(r => !string.IsNullOrEmpty(r)).ToList();
-			ViewBag.MicroRegions = allAccounts.GroupBy(a => a.MicroRegion)
+			ViewBag.MicroRegions = db.Accounts.GroupBy(a => a.MicroRegion)
 				.Select(grp => grp.FirstOrDefault().MicroRegion).Where(m => !string.IsNullOrEmpty(m)).ToList();
-			ViewBag.Departments = allAccounts.GroupBy(a => a.Department)
+			ViewBag.Departments = db.Accounts.GroupBy(a => a.Department)
 				.Select(grp => grp.FirstOrDefault().Department).Where(d => !string.IsNullOrEmpty(d)).ToList();
-			ViewBag.Positions = allAccounts.GroupBy(a => a.Position)
+			ViewBag.Positions = db.Accounts.GroupBy(a => a.Position)
 				.Select(grp => grp.FirstOrDefault().Position).Where(p => !string.IsNullOrEmpty(p)).ToList();
 
-			accountModels = Mapper.Map<IEnumerable<AccountModel>>(accounts).ToList();
+
 			// =======================     График      =============================
-			ViewBag.Percents = accountModels.Select(a => a.LastReviewedEvaluation?.Percent).Where(p => p.HasValue).ToList();
-			return View(accountModels.ToPagedList(page, pageSize));
+			ViewBag.Percents = accounts.Select(a => a.LastEvaluationPercent).Where(p => p.HasValue).ToList();
+
+			return View(accounts.ToPagedList(page, pageSize));
 		}
-		
-		/*
+
 		// GET: Accounts/Details/5
 		public ActionResult Details(int? id)
 		{
@@ -279,8 +307,8 @@
 			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Department,Position,Login,Active,ManagerId")] Account
 				account)
 		{
-			var dbAccount = db.Accounts.FirstOrDefault(a => a.Login == account.Login);
-			var currentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
+			Account dbAccount = db.Accounts.FirstOrDefault(a => a.Login == account.Login);
+			Account currentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
 			ViewBag.Accounts = new SelectList(db.Accounts.OrderBy(a => a.FullName), "Id", "FullName", Request.Form["ManagerId"]);
 
 			if (dbAccount != null)
@@ -300,8 +328,8 @@
 
 			// Можно редактировать админу, и нач. своего отдела.
 			if (currentAccount.Role == Role.Admin ||
-				(currentAccount.Role == Role.DepCheef && account.Department == currentAccount.Department &&
-				 account != currentAccount))
+			    (currentAccount.Role == Role.DepCheef && account.Department == currentAccount.Department &&
+			     account != currentAccount))
 			{
 				return View(account);
 			}
@@ -327,8 +355,8 @@
 
 			// Можно редактировать админу, и нач. своего отдела.
 			if (currentAccount.Role == Role.Admin ||
-				(currentAccount.Role == Role.DepCheef && account.Department == currentAccount.Department &&
-				 account != currentAccount))
+			    (currentAccount.Role == Role.DepCheef && account.Department == currentAccount.Department &&
+			     account != currentAccount))
 			{
 				return View(account);
 			}
@@ -390,8 +418,8 @@
 			}
 
 			if (rawFile.ContentType != "application/vnd.ms-excel" &&
-				rawFile.ContentType != "application/csv" &&
-				rawFile.ContentType != "text/csv")
+			    rawFile.ContentType != "application/csv" &&
+			    rawFile.ContentType != "text/csv")
 			{
 				ViewBag.Error = "Пожалуйста, выберете файл CSV";
 				return View();
@@ -492,8 +520,8 @@
 
 					// TODO: Заполнение ролей общего начальника, главного по ФН
 					if ((account.Position.StartsWith("Начальник отдела") ||
-						 account.Position.StartsWith("Нач. отдела") || account.Position.StartsWith("Нач.отдела"))
-						&& account.Region.StartsWith("Москва"))
+					     account.Position.StartsWith("Нач. отдела") || account.Position.StartsWith("Нач.отдела"))
+					    && account.Region.StartsWith("Москва"))
 					{
 						account.Role = Role.DepCheef;
 					}
@@ -509,7 +537,7 @@
 			}
 
 			// После импорта обновляем функц. руководителя
-			foreach (var account in db.Accounts)
+			foreach (Account account in db.Accounts)
 			{
 				account.Manager = db.Accounts.FirstOrDefault(a => a.FullName == account.ManagerFullName);
 				if (account.Manager != null)
@@ -525,8 +553,8 @@
                  if (account.Manager != null) account.Manager.Role = Role.DepCheef;
              }*/
 
-		/*	db.SaveChanges();
+			db.SaveChanges();
 			return RedirectToAction("Index");
-		}*/
+		}
 	}
 }

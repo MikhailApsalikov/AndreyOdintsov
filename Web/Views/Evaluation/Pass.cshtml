@@ -1,11 +1,11 @@
-﻿@model Odintsov.Accounts.Web.Models.Evaluation
+﻿@model Evaluation
 
 @{
 	ViewBag.Title = "Самостоятельная оценка компетенций сотрудника";
-	var account = ViewBag.CurrentAccount as Odintsov.Accounts.Web.Models.Account;
+	var account = ViewBag.CurrentAccount as Account;
 	var errors = ViewBag.IndicatorErrors as List<string>;
 	var values = ViewBag.IndicatorValues as Dictionary<string, string>;
-	var competencyList = ViewBag.CompetencyList as Odintsov.Accounts.Web.Models.CompetencyList;
+	var competencyList = ViewBag.CompetencyList as CompetencyList;
 }
 
 <h2>Самостоятельная оценка компетенций сотрудника</h2>

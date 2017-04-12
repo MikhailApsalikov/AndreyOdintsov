@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Repositories
+﻿namespace Entities
 {
+	using System;
+	using System.Collections.Generic;
 	using System.Data.Entity;
+	using System.Linq;
 	using Common.Enums;
-	using Entities;
 
 	public class TestDataInitializer : DropCreateDatabaseIfModelChanges<AccountsDbContext>
 	{

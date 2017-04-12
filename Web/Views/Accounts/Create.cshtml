@@ -1,21 +1,21 @@
-﻿@model Odintsov.Accounts.Web.Models.Account
+﻿@model Account
 
 @{
-    ViewBag.Title = "Создание сотрудника";
-    var roleSelect = new SelectList(Odintsov.Accounts.Web.Models.RoleMap.Default.GetDisplayRoleMap(), "Key", "Value", Odintsov.Accounts.Web.Models.Role.Employee);
+	ViewBag.Title = "Создание сотрудника";
+	var roleSelect = new SelectList(RoleMap.Default.GetDisplayRoleMap(), "Key", "Value", Role.Employee);
 }
 
 <h2>Создать сотрудника</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+	@Html.AntiForgeryToken()
+
+	<div class="form-horizontal">
+
+		<hr />
+		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 		<div class="form-group">
 			@Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label col-md-2" })
 			<div class="col-md-10">
@@ -80,26 +80,26 @@
 			</div>
 		</div>
 
-        @if (User.IsInRole("Admin"))
-        {
-            <div class="form-group">
-                @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
+		@if (User.IsInRole("Admin"))
+		{
+			<div class="form-group">
+				@Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
 					@Html.DropDownListFor(model => model.Role, roleSelect, htmlAttributes: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        }
+					@Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+				</div>
+			</div>
+		}
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Login, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Login, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Login, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        
-        <div class="form-group">
+		<div class="form-group">
+			@Html.LabelFor(model => model.Login, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.Login, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.Login, "", new { @class = "text-danger" })
+			</div>
+		</div>
+
+		<div class="form-group">
 			<div class="col-md-2"></div>
 			<div class="col-md-10">
 				@Html.EditorFor(model => model.Active)
@@ -108,16 +108,16 @@
 			@Html.ValidationMessageFor(model => model.Active, "", new { @class = "text-danger" })
 		</div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Создать" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
+		<div class="form-group">
+			<div class="col-md-offset-2 col-md-10">
+				<input type="submit" value="Создать" class="btn btn-default" />
+			</div>
+		</div>
+	</div>
 }
 
 <div>
-    @Html.ActionLink("Вернуться к списку", "Index")
+	@Html.ActionLink("Вернуться к списку", "Index")
 </div>
 
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>

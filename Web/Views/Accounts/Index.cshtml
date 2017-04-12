@@ -1,195 +1,195 @@
-﻿@model PagedList.IPagedList<AccountModel>
-@using Common.Filters
+﻿@model PagedList.IPagedList<Odintsov.Accounts.Web.Models.Account>
 @using PagedList.Mvc;
 
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
-    ViewBag.Title = "Список сотрудников";
-    var currentAccount = ViewBag.CurrentAccount as AccountModel;
-    var filter = ViewBag.Filter as AccountsFilter;
+	ViewBag.Title = "Список сотрудников";
+	var currentAccount = ViewBag.CurrentAccount as Account;
+	var filter = ViewBag.Filter as AccountsFilter;
 
-    var regions = ViewBag.Regions as List<string>;
-    var microRegions = ViewBag.MicroRegions as List<string>;
-    var departments = ViewBag.Departments as List<string>;
-    var positions = ViewBag.Positions as List<string>;
+	var regions = ViewBag.Regions as List<string>;
+	var microRegions = ViewBag.MicroRegions as List<string>;
+	var departments = ViewBag.Departments as List<string>;
+	var positions = ViewBag.Positions as List<string>;
 
-    var statistics = ViewBag.Percents as List<double?>;
+	var statistics = ViewBag.Percents as List<double?>;
 }
 
 <h2>Список сотрудников</h2>
 
 @if (User.IsInRole("Admin"))
 {
-    <p>
-        <span>
-            @Html.ActionLink("Создать сотрудника", "Create")
-        </span>
-        <span>
-            | @Html.ActionLink("Импорт сотрудников из файла", "Import")
-        </span>
-    </p>
+	<p>
+		<span>
+			@Html.ActionLink("Создать сотрудника", "Create")
+		</span>
+		<span>
+			| @Html.ActionLink("Импорт сотрудников из файла", "Import")
+		</span>
+	</p>
 }
 
 <div id="filter" class="form-inline">
-    <div class="form-group">
-        <label for="RegionFilter">Город</label>
-        <select id="RegionFilter" class="form-control">
-            <option value="">-</option>
-            @foreach (var region in regions)
-            {
-                <option value="@region" @(filter != null && region == filter.Region ? "selected" : "")>@region</option>
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="MicroRegionFilter">Макрорегион</label>
-        <select id="MicroRegionFilter" class="form-control">
-            <option value="">-</option>
-            @foreach (var microRegion in microRegions)
-            {
-                <option value="@microRegion" @(filter != null && microRegion == filter.MicroRegion ? "selected" : "")>@microRegion</option>
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="DepartmentFilter">Отдел</label>
-        <select id="DepartmentFilter" class="form-control">
-            <option value="">-</option>
-            @foreach (var department in departments)
-            {
-                <option value="@department" @(filter != null && department == filter.Department ? "selected" : "")>@department</option>
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="PositionFilter">Должность</label>
-        <select id="PositionFilter" class="form-control">
-            <option value="">-</option>
-            @foreach (var position in positions)
-            {
-                <option value="@position" @(filter != null && position == filter.Position ? "selected" : "")>@position</option>
-            }
-        </select>
-    </div>
-    <div class="form-group pull-right">
-        <button id="apply_filter" class="btn btn-default">Применить</button>
-    </div>
+	<div class="form-group">
+		<label for="RegionFilter">Город</label>
+		<select id="RegionFilter" class="form-control">
+			<option value="">-</option>
+			@foreach (var region in regions)
+			{
+				<option value="@region" @(filter != null && region == filter.Region ? "selected" : "")>@region</option>
+			}
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="MicroRegionFilter">Макрорегион</label>
+		<select id="MicroRegionFilter" class="form-control">
+			<option value="">-</option>
+			@foreach (var microRegion in microRegions)
+			{
+				<option value="@microRegion" @(filter != null && microRegion == filter.MicroRegion ? "selected" : "")>@microRegion</option>
+			}
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="DepartmentFilter">Отдел</label>
+		<select id="DepartmentFilter" class="form-control">
+			<option value="">-</option>
+			@foreach (var department in departments)
+			{
+				<option value="@department" @(filter != null && department == filter.Department ? "selected" : "")>@department</option>
+			}
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="PositionFilter">Должность</label>
+		<select id="PositionFilter" class="form-control">
+			<option value="">-</option>
+			@foreach (var position in positions)
+			{
+				<option value="@position" @(filter != null && position == filter.Position ? "selected" : "")>@position</option>
+			}
+		</select>
+	</div>
+	<div class="form-group pull-right">
+		<button id="apply_filter" class="btn btn-default">Применить</button>
+	</div>
 </div>
 
 <table class="table fixed-height-rows">
-    <tr class="info">
-        <th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Code).ToString(), "Index", new { sortOrder = ViewBag.CodeSortParm, filter = filter.ToJson() })
-        </th>
+	<tr class="info">
 		<th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Region).ToString(), "Index", new { sortOrder = ViewBag.RegionSortParm, filter = filter.ToJson() })
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Code).ToString(), "Index", new { sortOrder = ViewBag.CodeSortParm, filter = filter.ToJson() })
 		</th>
 		<th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().MicroRegion).ToString(), "Index", new { sortOrder = ViewBag.MicroRegionSortParm, filter = filter.ToJson() })
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Region).ToString(), "Index", new { sortOrder = ViewBag.RegionSortParm, filter = filter.ToJson() })
 		</th>
 		<th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Department).ToString(), "Index", new { sortOrder = ViewBag.DepartmentSortParm, filter = filter.ToJson() })
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().MicroRegion).ToString(), "Index", new { sortOrder = ViewBag.MicroRegionSortParm, filter = filter.ToJson() })
 		</th>
 		<th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Position).ToString(), "Index", new { sortOrder = ViewBag.PositionSortParm, filter = filter.ToJson() })
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Department).ToString(), "Index", new { sortOrder = ViewBag.DepartmentSortParm, filter = filter.ToJson() })
 		</th>
 		<th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().FullName).ToString(), "Index", new { sortOrder = ViewBag.FullNameSortParm, filter = filter.ToJson() })
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Position).ToString(), "Index", new { sortOrder = ViewBag.PositionSortParm, filter = filter.ToJson() })
 		</th>
-        <th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Sex).ToString(), "Index", new { sortOrder = ViewBag.SexSortParm, filter = filter.ToJson() })
-        </th>
-        <th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Login).ToString(), "Index", new { sortOrder = ViewBag.LoginSortParm, filter = filter.ToJson() })
-        </th>
-        <th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Role).ToString(), "Index", new { sortOrder = ViewBag.RoleSortParm, filter = filter.ToJson() })
-        </th>
-        <th>
-            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Manager).ToString(), "Index", new { sortOrder = ViewBag.ManagerSortParm, filter = filter.ToJson() })
-        </th>
-        <th>
-            @Html.ActionLink("Текущий результат оценки", "Index", new { sortOrder = ViewBag.LastEvaluationPercentSortParm, filter = filter.ToJson() })
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Active)
-        </th>
-        <th></th>
-    </tr>
+		<th>
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().FullName).ToString(), "Index", new { sortOrder = ViewBag.FullNameSortParm, filter = filter.ToJson() })
+		</th>
+		<th>
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Sex).ToString(), "Index", new { sortOrder = ViewBag.SexSortParm, filter = filter.ToJson() })
+		</th>
+		<th>
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Login).ToString(), "Index", new { sortOrder = ViewBag.LoginSortParm, filter = filter.ToJson() })
+		</th>
+		<th>
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Role).ToString(), "Index", new { sortOrder = ViewBag.RoleSortParm, filter = filter.ToJson() })
+		</th>
+		<th>
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Manager).ToString(), "Index", new { sortOrder = ViewBag.ManagerSortParm, filter = filter.ToJson() })
+		</th>
+		<th>
+			@Html.ActionLink("Текущий результат оценки", "Index", new { sortOrder = ViewBag.LastEvaluationPercentSortParm, filter = filter.ToJson() })
+		</th>
+		<th>
+			@Html.DisplayNameFor(model => model.FirstOrDefault().Active)
+		</th>
+		<th></th>
+	</tr>
 
-@foreach (var item in Model) {
-    <tr>
-		<td title="@Html.DisplayFor(modelItem => item.Code)">
-			@Html.DisplayFor(modelItem => item.Code)
-		</td>
-		<td title="@Html.DisplayFor(modelItem => item.Region)">
-			@Html.DisplayFor(modelItem => item.Region)
-		</td>
-		<td title="@Html.DisplayFor(modelItem => item.MicroRegion)">
-			@Html.DisplayFor(modelItem => item.MicroRegion)
-		</td>
-		<td title="@Html.DisplayFor(modelItem => item.Department)">
-			@Html.DisplayFor(modelItem => item.Department)
-		</td>
-		<td title="@Html.DisplayFor(modelItem => item.Position)">
-			@Html.DisplayFor(modelItem => item.Position)
-		</td>
-        <td title="@Html.DisplayFor(modelItem => item.FullName)">
-            @Html.DisplayFor(modelItem => item.FullName)
-        </td>
-		<td title="@Html.DisplayFor(modelItem => item.Sex)">
-			@Html.DisplayFor(modelItem => item.Sex)
-		</td>
-        <td title="@Html.DisplayFor(modelItem => item.Login)">
-            @Html.DisplayFor(modelItem => item.Login)
-        </td>
-        <td title="@Html.DisplayFor(modelItem => item.Role)">
-            @RoleMap.Default.GetDisplayName(item.Role)
-        </td>
-        <td title="@Html.DisplayFor(modelItem => item.Manager)">
-			@if (item.Manager != null)
-			{
-		        @Html.ActionLink(item.Manager, "Details", new { Id = item.ManagerId })
-			}
-        </td>
-        <td>
-            @(item.LastEvaluationPercent != null ? string.Format("{0:0.00}%", item.LastEvaluationPercent) : "")
-        </td>
-        <td>
-			@Html.DisplayFor(modelItem => item.Active)
-		</td>
-        <td>
-            @if ((item.Department == currentAccount.Department && item.Department != currentAccount.Department && item != currentAccount) || User.IsInRole("Admin"))
-            {
-                @Html.ActionLink("Правка", "Edit", new { id = item.Id })
-                <br />
-            }
-            @Html.ActionLink("Подробно", "Details", new { id = item.Id })
-        </td>
-    </tr>
-}
+	@foreach (var item in Model)
+	{
+		<tr>
+			<td title="@Html.DisplayFor(modelItem => item.Code)">
+				@Html.DisplayFor(modelItem => item.Code)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.Region)">
+				@Html.DisplayFor(modelItem => item.Region)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.MicroRegion)">
+				@Html.DisplayFor(modelItem => item.MicroRegion)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.Department)">
+				@Html.DisplayFor(modelItem => item.Department)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.Position)">
+				@Html.DisplayFor(modelItem => item.Position)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.FullName)">
+				@Html.DisplayFor(modelItem => item.FullName)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.Sex)">
+				@Html.DisplayFor(modelItem => item.Sex)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.Login)">
+				@Html.DisplayFor(modelItem => item.Login)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.Role)">
+				@RoleMap.Default.GetDisplayName(item.Role)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.Manager.FullName)">
+				@if (item.Manager != null)
+				{
+					@Html.ActionLink(item.Manager.FullName, "Details", new { Id = item.Manager.Id })
+				}
+			</td>
+			<td>
+				@(item.LastEvaluationPercent != null ? string.Format("{0:0.00}%", item.LastEvaluationPercent) : "")
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.Active)
+			</td>
+			<td>
+				@if ((item.Department == currentAccount.Department && item.Department != currentAccount.Department && item != currentAccount) || User.IsInRole("Admin"))
+				{
+					@Html.ActionLink("Правка", "Edit", new { id = item.Id })
+					<br />
+				}
+				@Html.ActionLink("Подробно", "Details", new { id = item.Id })
+			</td>
+		</tr>
+	}
 
 </table>
 <br />
 
 @if (Model.PageCount > 1)
 {
-<div>Страница №@(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount</div>
+	<div>Страница №@(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount</div>
 
-@Html.PagedListPager(Model, page => Url.Action("Index", new { page, filter = filter.ToJson(), sortOrder = ViewBag.CurrentSort }))
+	@Html.PagedListPager(Model, page => Url.Action("Index", new { page, filter = filter.ToJson(), sortOrder = ViewBag.CurrentSort }))
 }
 
 @if (statistics.Count > 0)
 {
-<h4>Общий график компетенций:</h4>
-<div class="chart-container chart-bar"><canvas id="chart"></canvas></div>
+	<h4>Общий график компетенций:</h4>
+	<div class="chart-container chart-bar"><canvas id="chart"></canvas></div>
 }
 
 @section scripts {
-<script src="~/Scripts/jquery-2.2.3.min.js"></script>
-<script src="~/Scripts/Chart.min.js"></script>
-<script type="text/javascript">
+	<script src="~/Scripts/jquery-2.2.3.min.js"></script>
+	<script src="~/Scripts/Chart.min.js"></script>
+	<script type="text/javascript">
     var data = {
         labels: ["0-10%", "10-20%", "20-30%", "30-40%", "40-50%", "50-60%", "60-70%", "70-80%", "80-90%", "90-100%", "100-110%", "110-120%"],
 
@@ -253,9 +253,9 @@
             }
         });
     });
-</script>
+	</script>
 
-<script>
+	<script>
     $('#apply_filter').on('click', function () {
         var url = "@Url.Action("Index", new { Model.PageNumber, sortOrder = ViewBag.CurrentSort })",
             params = $.param({
@@ -269,5 +269,5 @@
 
         location.href = url.indexOf('?') === -1 ? url + '?' + params : url + '&' + params;
     });
-</script>
+	</script>
 }
