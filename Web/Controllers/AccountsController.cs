@@ -379,7 +379,6 @@
 				db.Entry(account).Property(uco => uco.Password).IsModified = false;
 				db.Entry(account).Property(uco => uco.Salt).IsModified = false;
 				db.Entry(account).Property(uco => uco.Guid).IsModified = false;
-				db.Entry(account).Property(uco => uco.ManagerFullName).IsModified = false;
 				db.Entry(account).Property(uco => uco.LastEvaluationPercent).IsModified = false;
 				db.SaveChanges();
 				return RedirectToAction("Index");
@@ -475,10 +474,12 @@
 					if (account == null)
 					{
 						creation = true;
-						account = new Account();
-						account.Active = true;
-						account.Role = Role.Employee;
-						account.Guid = Guid.NewGuid().ToString();
+						account = new Account
+						{
+							Active = true,
+							Role = Role.Employee,
+							Guid = Guid.NewGuid().ToString()
+						};
 					}
 
 					if (values.Length > 0)
@@ -511,7 +512,11 @@
 					}
 					if (values.Length > 7)
 					{
-						account.ManagerFullName = values[7];
+						account.Manager = db.Accounts.FirstOrDefault(a => a.FullName == values[7]);
+						if (account.Manager != null)
+						{
+							account.Manager.Role = Role.AdministrativeManager;
+						}
 					}
 					if (values.Length > 8)
 					{
@@ -536,15 +541,6 @@
 				db.SaveChanges();
 			}
 
-			// После импорта обновляем функц. руководителя
-			foreach (Account account in db.Accounts)
-			{
-				account.Manager = db.Accounts.FirstOrDefault(a => a.FullName == account.ManagerFullName);
-				if (account.Manager != null)
-				{
-					account.Manager.Role = Role.DirectManager;
-				}
-			}
 			/*
              // После импорта обновляем админ. руководителя
              foreach (var account in db.Accounts)

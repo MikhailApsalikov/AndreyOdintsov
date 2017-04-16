@@ -22,7 +22,9 @@
 
 		[Display(Name = "Логин")] [RegularExpression(@"[a-zA-Z0-9]+")] [Required] public string Login;
 
-		[Display(Name = "Админ. руководитель")] public string Manager;
+		[Display(Name = "Админ. руководитель")] public string AdministrativeManager;
+
+		[Display(Name = "Функц. руководитель")] public string Manager;
 
 		[Display(Name = "Макрорегион")] public string MicroRegion;
 

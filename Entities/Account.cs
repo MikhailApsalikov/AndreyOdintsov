@@ -11,6 +11,7 @@
 	using Common.Enums;
 	using Microsoft.AspNet.Identity;
 
+	[MetadataType(typeof(AccountMetadata))]
 	public class Account : IUser
 	{
 		public Account()
@@ -37,12 +38,16 @@
 		public string Guid { get; set; }
 		public int? ManagerId { get; set; }
 		public string ManagerFullName { get; set; }
+		public virtual Account Manager { get; set; }
+
+		public int? AdministrativeManagerId { get; set; }
+		public virtual Account AdministrativeManager { get; set; }
 		public double? LastEvaluationPercent { get; set; }
 
 		public virtual ICollection<Evaluation> Evaluations { get; set; }
 		public virtual ICollection<Evaluation> EvaluationsReviews { get; set; }
 		public virtual ICollection<Account> Team { get; set; }
-		public virtual Account Manager { get; set; }
+
 		public virtual ICollection<Evaluation> EvaluationsManages { get; set; }
 
 		[Display(Name = "Роль")]
@@ -69,7 +74,7 @@
 		public void SetPassword(string password)
 		{
 			Salt = Hash(new Random().Next() + Login ?? "" + FullName ?? "" +
-			            ":SOINpw98chn4p9UBEPW(*BNECpub");
+						":SOINpw98chn4p9UBEPW(*BNECpub");
 			Password = Hash(password + Salt);
 		}
 
