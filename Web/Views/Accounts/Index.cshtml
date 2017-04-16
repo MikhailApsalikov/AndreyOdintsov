@@ -113,7 +113,10 @@
 			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Manager).ToString(), "Index", new { sortOrder = ViewBag.ManagerSortParm, filter = filter.ToJson() })
 		</th>
 		<th>
-			@Html.ActionLink("Текущий результат оценки", "Index", new { sortOrder = ViewBag.LastEvaluationPercentSortParm, filter = filter.ToJson() })
+			@Html.ActionLink("Текущий результат оценки", "Index", new {sortOrder = ViewBag.LastEvaluationPercentSortParm, filter = filter.ToJson()})
+		</th>
+		<th>
+			Оценка пройдена
 		</th>
 		<th>
 			@Html.DisplayNameFor(model => model.FirstOrDefault().Active)
@@ -165,6 +168,9 @@
 			</td>
 			<td>
 				@(item.LastEvaluationPercent != null ? string.Format("{0:0.00}%", item.LastEvaluationPercent) : "")
+			</td>
+			<td>
+				@(item.Evaluations.Any()?"Да":"Нет")
 			</td>
 			<td>
 				@Html.DisplayFor(modelItem => item.Active)
