@@ -104,7 +104,10 @@
 			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Login).ToString(), "Index", new { sortOrder = ViewBag.LoginSortParm, filter = filter.ToJson() })
 		</th>
 		<th>
-			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Role).ToString(), "Index", new { sortOrder = ViewBag.RoleSortParm, filter = filter.ToJson() })
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Role).ToString(), "Index", new {sortOrder = ViewBag.RoleSortParm, filter = filter.ToJson()})
+		</th>
+		<th>
+			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().AdministrativeManager).ToString(), "Index", new { sortOrder = ViewBag.AdministrativeManagerSortParm, filter = filter.ToJson() })
 		</th>
 		<th>
 			@Html.ActionLink(Html.DisplayNameFor(model => model.FirstOrDefault().Manager).ToString(), "Index", new { sortOrder = ViewBag.ManagerSortParm, filter = filter.ToJson() })
@@ -147,6 +150,12 @@
 			</td>
 			<td title="@Html.DisplayFor(modelItem => item.Role)">
 				@RoleMap.Default.GetDisplayName(item.Role)
+			</td>
+			<td title="@Html.DisplayFor(modelItem => item.AdministrativeManager.FullName)">
+				@if (item.AdministrativeManager != null)
+				{
+				@Html.ActionLink(item.AdministrativeManager.FullName, "Details", new { Id = item.AdministrativeManager.Id })
+				}
 			</td>
 			<td title="@Html.DisplayFor(modelItem => item.Manager.FullName)">
 				@if (item.Manager != null)

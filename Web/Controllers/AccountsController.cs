@@ -155,6 +155,7 @@
 			ViewBag.LoginSortParm = sortOrder != "+Login" ? "+Login" : "-Login";
 			ViewBag.RoleSortParm = sortOrder != "+Role" ? "+Role" : "-Role";
 			ViewBag.ManagerSortParm = sortOrder != "+Manager" ? "+Manager" : "-Manager";
+			ViewBag.AdministrativeManagerSortParm = sortOrder != "+AdministrativeManager" ? "+AdministrativeManager" : "-AdministrativeManager";
 			ViewBag.LastEvaluationPercentSortParm = sortOrder != "+LastEvaluationPercent"
 				? "+LastEvaluationPercent"
 				: "-LastEvaluationPercent";
@@ -213,6 +214,11 @@
 					accounts = @ascending
 						? accounts.OrderBy(s => s.Manager == null).ThenBy(s => s.Manager.FullName)
 						: accounts.OrderByDescending(s => s.Manager.FullName);
+					break;
+				case "AdministrativeManager":
+					accounts = @ascending
+						? accounts.OrderBy(s => s.AdministrativeManager == null).ThenBy(s => s.AdministrativeManager.FullName)
+						: accounts.OrderByDescending(s => s.AdministrativeManager.FullName);
 					break;
 				case "LastEvaluationPercent":
 					accounts = @ascending
