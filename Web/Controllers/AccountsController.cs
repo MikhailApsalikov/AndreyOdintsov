@@ -129,7 +129,7 @@
 				accounts = accounts.Where(a => teamIds.Contains(a.Id));
 			}
 
-			if (currentAccount.Role == Role.DepCheef)
+			if (currentAccount.Role == Role.FunctionalManager)
 			{
 				if (currentAccount.Team.Count > 0)
 				{
@@ -284,7 +284,7 @@
 			}
 			ViewBag.CompetencyList = new CompetencyList(Server.MapPath("~/App_Data/CompetencyList.xml")).Competencies;
 			ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-			account.Principal = db.Accounts.FirstOrDefault(a => a.Department == account.Department && a.Role == Role.DepCheef);
+			account.Principal = db.Accounts.FirstOrDefault(a => a.Department == account.Department && a.Role == Role.FunctionalManager);
 
 			return View(account);
 		}
@@ -302,7 +302,7 @@
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Authorize(Roles = "Admin,DepCheef")]
+		[Authorize(Roles = "Admin,FunctionalManager")]
 		public ActionResult Create(
 			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Department,Position,Login,Active,ManagerId")] Account
 				account)
@@ -328,7 +328,7 @@
 
 			// Можно редактировать админу, и нач. своего отдела.
 			if (currentAccount.Role == Role.Admin ||
-			    (currentAccount.Role == Role.DepCheef && account.Department == currentAccount.Department &&
+			    (currentAccount.Role == Role.FunctionalManager && account.Department == currentAccount.Department &&
 			     account != currentAccount))
 			{
 				return View(account);
@@ -337,7 +337,7 @@
 		}
 
 		// GET: Accounts/Edit/5
-		[Authorize(Roles = "Admin,Cheef,DepCheef,FuncManager")]
+		[Authorize(Roles = "Admin,AdministrativeManager,FunctionalManager,DirectManager")]
 		public ActionResult Edit(int? id)
 		{
 			if (id == null)
@@ -355,7 +355,7 @@
 
 			// Можно редактировать админу, и нач. своего отдела.
 			if (currentAccount.Role == Role.Admin ||
-			    (currentAccount.Role == Role.DepCheef && account.Department == currentAccount.Department &&
+			    (currentAccount.Role == Role.FunctionalManager && account.Department == currentAccount.Department &&
 			     account != currentAccount))
 			{
 				return View(account);
@@ -368,7 +368,7 @@
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Authorize(Roles = "Admin,Cheef,DepCheef,FuncManager")]
+		[Authorize(Roles = "Admin,AdministrativeManager,FunctionalManager,DirectManager")]
 		public ActionResult Edit(
 			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId")] Account
 				account)
@@ -523,7 +523,7 @@
 					     account.Position.StartsWith("Нач. отдела") || account.Position.StartsWith("Нач.отдела"))
 					    && account.Region.StartsWith("Москва"))
 					{
-						account.Role = Role.DepCheef;
+						account.Role = Role.FunctionalManager;
 					}
 
 					if (creation)
@@ -542,7 +542,7 @@
 				account.Manager = db.Accounts.FirstOrDefault(a => a.FullName == account.ManagerFullName);
 				if (account.Manager != null)
 				{
-					account.Manager.Role = Role.FuncManager;
+					account.Manager.Role = Role.DirectManager;
 				}
 			}
 			/*
@@ -550,7 +550,7 @@
              foreach (var account in db.Accounts)
              {
                  account.Manager = db.Accounts.FirstOrDefault(a => a.FullName == account.ManagerFullName);
-                 if (account.Manager != null) account.Manager.Role = Role.DepCheef;
+                 if (account.Manager != null) account.Manager.Role = Role.FunctionalManager;
              }*/
 
 			db.SaveChanges();

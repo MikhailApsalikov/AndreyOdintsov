@@ -27,7 +27,7 @@
 			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
 
 			ViewBag.Principal =
-				db.Accounts.FirstOrDefault(a => a.Department == currentAccount.Department && a.Role == Role.DepCheef);
+				db.Accounts.FirstOrDefault(a => a.Department == currentAccount.Department && a.Role == Role.FunctionalManager);
 
 			return View(db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name));
 		}

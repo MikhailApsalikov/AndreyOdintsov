@@ -80,7 +80,7 @@
 		}
 
 		// GET: Evaluation/Review/5  Для начальника отдела
-		[Authorize(Roles = "DepCheef,Cheef,FuncManager")]
+		[Authorize(Roles = "FunctionalManager,AdministrativeManager,DirectManager")]
 		public ActionResult Review(int id)
 		{
 			PrepareComtetencyList();
@@ -97,7 +97,7 @@
 			return View();
 		}
 
-		[Authorize(Roles = "DepCheef,Cheef,FuncManager")]
+		[Authorize(Roles = "FunctionalManager,AdministrativeManager,DirectManager")]
 		[HttpPost, ActionName("Review")]
 		[ValidateAntiForgeryToken]
 		public ActionResult ReviewPost(int id)
@@ -120,7 +120,7 @@
 				return View();
 			}
 
-			if (currentAccount.Role == Role.DepCheef && evaluation.Examinier == null)
+			if (currentAccount.Role == Role.FunctionalManager && evaluation.Examinier == null)
 			{
 				evaluation.Reviewed = DateTime.Now;
 				currentAccount.EvaluationsReviews.Add(evaluation);
@@ -138,7 +138,7 @@
 					      ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
 
 
-				if (currentAccount.Role == Role.DepCheef && evaluation.Examinier == null)
+				if (currentAccount.Role == Role.FunctionalManager && evaluation.Examinier == null)
 				{
 					evaluationValue.ReviewValue = double.Parse(kv.Value.Replace(".", ","));
 				}
@@ -148,7 +148,7 @@
 				}
 			}
 
-			if (currentAccount.Role == Role.DepCheef && evaluation.Examinier == null)
+			if (currentAccount.Role == Role.FunctionalManager && evaluation.Examinier == null)
 			{
 				evaluation.Examinier = currentAccount;
 				evaluation.ReviewedResult = evaluation.EvaluationValues.Sum(ev => ev.ReviewValue ?? 0);

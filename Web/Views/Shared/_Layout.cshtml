@@ -16,7 +16,7 @@
             </div>
 
             <ul class="nav navbar-nav">
-                @if (User.IsInRole("Admin") || User.IsInRole("DepCheef") || User.IsInRole("Cheef") || User.IsInRole("FuncManager"))
+                @if (User.IsInRole("Admin") || User.IsInRole("FunctionalManager") || User.IsInRole("AdministrativeManager") || User.IsInRole("DirectManager"))
 				{
 					<li>
 						@Html.ActionLink("Сотрудники", controllerName: "Accounts", actionName: "Index")

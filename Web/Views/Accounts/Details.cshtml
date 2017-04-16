@@ -96,7 +96,7 @@
                             <td>
                                 @Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
 
-                                @if ((User.IsInRole("DepCheef") && Model.Department == account.Department && evaluation.Examinier == null) ||
+                                @if ((User.IsInRole("FunctionalManager") && Model.Department == account.Department && evaluation.Examinier == null) ||
 									 (Model.Manager == account && evaluation.Manager == null))
 								{
                                     <br />

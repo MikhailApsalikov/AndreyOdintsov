@@ -3,10 +3,10 @@
 	public enum Role
 	{
 		Admin = 0,
-		Cheef = 1,
-		DepCheef = 2,
+		AdministrativeManager = 1,
+		FunctionalManager = 2,
 		Employee = 3,
 		None = 4,
-		FuncManager = 5
+		DirectManager = 5
 	}
 }

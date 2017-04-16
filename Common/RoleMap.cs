@@ -9,9 +9,9 @@
 		private readonly Dictionary<Role, string> displayNameMap = new Dictionary<Role, string>
 		{
 			{Role.Admin, "Администратор"},
-			{Role.Cheef, "Начальник"},
-			{Role.FuncManager, "Административный руководитель"},
-			{Role.DepCheef, "Функциональный руководитель"},
+			{Role.AdministrativeManager, "Административный руководитель"},
+			{Role.DirectManager, "Начальник"},
+			{Role.FunctionalManager, "Функциональный руководитель"},
 			{Role.Employee, "Сотрудник"},
 			{Role.None, "-"}
 		};
@@ -19,9 +19,9 @@
 		private readonly Dictionary<Role, string> map = new Dictionary<Role, string>
 		{
 			{Role.Admin, "Admin"},
-			{Role.Cheef, "Cheef"},
-			{Role.FuncManager, "FuncManager"},
-			{Role.DepCheef, "DepCheef"},
+			{Role.AdministrativeManager, "AdministrativeManager"},
+			{Role.DirectManager, "DirectManager"},
+			{Role.FunctionalManager, "FunctionalManager"},
 			{Role.Employee, "Employee"},
 			{Role.None, "None"}
 		};
