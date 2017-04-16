@@ -275,8 +275,7 @@
 
 			return View(accounts.ToPagedList(page, pageSize));
 		}
-
-		// GET: Accounts/Details/5
+		
 		public ActionResult Details(int? id)
 		{
 			if (id == null)
@@ -310,7 +309,7 @@
 		[ValidateAntiForgeryToken]
 		[Authorize(Roles = "Admin,FunctionalManager")]
 		public ActionResult Create(
-			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Department,Position,Login,Active,ManagerId")] Account
+			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId,AdministrativeManagerId")] Account
 				account)
 		{
 			Account dbAccount = db.Accounts.FirstOrDefault(a => a.Login == account.Login);
@@ -376,7 +375,7 @@
 		[ValidateAntiForgeryToken]
 		[Authorize(Roles = "Admin,AdministrativeManager,FunctionalManager,DirectManager")]
 		public ActionResult Edit(
-			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId")] Account
+			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId,AdministrativeManagerId")] Account
 				account)
 		{
 			if (ModelState.IsValid)

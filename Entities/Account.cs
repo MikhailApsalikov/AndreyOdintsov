@@ -37,7 +37,6 @@
 		public Role? Role { get; set; }
 		public string Guid { get; set; }
 		public int? ManagerId { get; set; }
-		public string ManagerFullName { get; set; }
 		public virtual Account Manager { get; set; }
 
 		public int? AdministrativeManagerId { get; set; }

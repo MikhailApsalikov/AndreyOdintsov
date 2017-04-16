@@ -55,6 +55,11 @@
 			<dt>@Html.DisplayNameFor(model => model.Principal)</dt>
 			<dd>@Html.ActionLink(Model.Principal.FullName, "Details", new { Id = Model.Principal.Id })</dd>
 		}
+		@if (Model.AdministrativeManager != null)
+		{
+			<dt>@Html.DisplayNameFor(model => model.AdministrativeManager)</dt>
+			<dd>@Html.ActionLink(Model.AdministrativeManager.FullName, "Details", new { Id = Model.AdministrativeManager.Id })</dd>
+		}
 		@if (Model.Manager != null)
 		{
 			<dt>@Html.DisplayNameFor(model => model.Manager)</dt>
