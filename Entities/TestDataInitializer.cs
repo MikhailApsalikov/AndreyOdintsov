@@ -19,7 +19,7 @@
 		}
 
 		private void InitializeTestEvaluations(AccountsDbContext context)
-		{
+		{/*
 			if (context.Evaluations.Any())
 			{
 				return;
@@ -84,7 +84,7 @@
 				}
 			};
 
-			context.Accounts.FirstOrDefault(s => s.Id == 7).Evaluations = evaluations;
+			context.Accounts.FirstOrDefault(s => s.Id == 7).Evaluations = evaluations;*/
 		}
 
 		private void InitializeTestAccounts(AccountsDbContext context)
