@@ -3,62 +3,63 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/Content/main.css" />
+	<meta name="viewport" content="width=device-width" />
+	<title>@ViewBag.Title</title>
+	<link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/Content/main.css" />
 </head>
 <body>
 
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header">
-                @Html.ActionLink("Мой профиль", controllerName: "Home", actionName: "Index", routeValues: null, htmlAttributes: new { @class = "navbar-brand" })
-            </div>
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				@Html.ActionLink("Мой профиль", controllerName: "Home", actionName: "Index", routeValues: null, htmlAttributes: new { @class = "navbar-brand" })
+			</div>
 
-            <ul class="nav navbar-nav">
-                @if (User.IsInRole("Admin") || User.IsInRole("FunctionalManager") || User.IsInRole("AdministrativeManager") || User.IsInRole("DirectManager"))
-                {
-	                <li>
-		                @Html.ActionLink("Сотрудники", controllerName: "Accounts", actionName: "Index")
-	                </li>
-                }
+			<ul class="nav navbar-nav">
+				@if (User.IsInRole("Admin") || User.IsInRole("FunctionalManager") || User.IsInRole("AdministrativeManager") || User.IsInRole("DirectManager"))
+				{
+					<li>
+						@Html.ActionLink("Сотрудники", controllerName: "Accounts", actionName: "Index")
+					</li>
+				}
 				@if (EvaluationWorkflow.CanPass(User?.Identity?.Name))
 				{
 					<li>
 						@Html.ActionLink("Оценка компетенций", controllerName: "Evaluation", actionName: "Pass")
 					</li>
 				}
-                @if (User.IsInRole("Admin"))
-                {
-                    <li>
-                        @Html.ActionLink("Файл компетенций", controllerName: "Home", actionName: "CompetencyList")
-                    </li>
-                }
-            </ul>
+				@if (User.IsInRole("Admin"))
+				{
+					<li>
+						@Html.ActionLink("Файл компетенций", controllerName: "Home", actionName: "CompetencyList")
+					</li>
+				}
+			</ul>
 
-            <ul class="nav navbar-nav navbar-right">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <li>
-                        @Html.ActionLink("Выход (" + User.Identity.Name + ")", controllerName: "Accounts", actionName: "LogOff")
-                    </li>
-                }
-                else
-                {
-                    <li>
-                        @Html.ActionLink("Вход", controllerName: "Accounts", actionName: "LogOn")
-                    </li>
-                }
-            </ul>
-        </div>
-    </nav>
+			<ul class="nav navbar-nav navbar-right">
+				@if (User.Identity.IsAuthenticated)
+				{
+					<li>
+						@Html.ActionLink("Выход (" + User.Identity.Name + ")", controllerName: "Accounts", actionName: "LogOff")
+					</li>
+				}
+				else
+				{
+					<li>
+						@Html.ActionLink("Вход", controllerName: "Accounts", actionName: "LogOn")
+					</li>
+				}
+			</ul>
+		</div>
+	</nav>
 
-    <div class="container">
-        <p class="text-danger">@ViewBag.Error</p>
-        @RenderBody()
-    </div>
+	<div class="container">
+		<p class="text-danger">@ViewBag.Error</p>
+		@RenderBody()
+	</div>
 
-    @RenderSection("scripts", false)
+	<script src="~/Scripts/lodash.js"></script>
+	@RenderSection("scripts", false)
 </body>
 </html>

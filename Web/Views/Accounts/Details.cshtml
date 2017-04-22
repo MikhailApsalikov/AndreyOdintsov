@@ -11,6 +11,7 @@
 	var competencies = lastReviewedEvaluation == null ? new int?[] { } :
 			lastReviewedEvaluation.EvaluationValues.GroupBy(k => k.Competency)
 				.Select(g => g.FirstOrDefault().Competency).ToArray();
+	List<Evaluation> evaluationsForDevChart = Model?.Evaluations.Where(s => s.GetPercent() != null).ToList();
 }
 
 <h2>Подробно о @Model.FullName</h2>
@@ -213,7 +214,7 @@
 			<canvas id="chart"></canvas>
 		</div>
 	}
-	@if (Model.Evaluations != null && Model.Evaluations.Any())
+	@if (evaluationsForDevChart != null && evaluationsForDevChart.Any())
 	{
 		<div class="chart-container chart-employeee-development">
 			<h4>График развития сотрудника:</h4>
@@ -231,48 +232,48 @@
 		<script type="text/javascript">
 			var data = {
 				labels: [
-                    @foreach (var c in competencies)
+					@foreach (var c in competencies)
 					{
-                        @Html.Raw('"' + competencyList.FirstOrDefault(cl => cl.Id == c).Title + "\",")
+						@Html.Raw('"' + competencyList.FirstOrDefault(cl => cl.Id == c).Title + "\",")
 					}
 				],
 				datasets: [
-                    {
-                    	label: "Оценка административного руководителя",
-                    	backgroundColor: "rgba(179,181,198,0.2)",
-                    	borderColor: "rgba(179,181,198,1)",
-                    	pointBackgroundColor: "rgba(179,181,198,1)",
-                    	pointBorderColor: "#fff",
-                    	pointHoverBackgroundColor: "#fff",
-                    	pointHoverBorderColor: "rgba(179,181,198,1)",
-                    	data: [
-                            @foreach (var c in competencies)
+					{
+						label: "Оценка административного руководителя",
+						backgroundColor: "rgba(179,181,198,0.2)",
+						borderColor: "rgba(179,181,198,1)",
+						pointBackgroundColor: "rgba(179,181,198,1)",
+						pointBorderColor: "#fff",
+						pointHoverBackgroundColor: "#fff",
+						pointHoverBorderColor: "rgba(179,181,198,1)",
+						data: [
+							@foreach (var c in competencies)
 							{
 								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
 								var count = evs.Count();
 								var sum = evs.Sum(ev => ev.ManagerValue);
-                                @(((sum - count) * 120 / (count * 2)).ToString().Replace(',', '.') + ", ")
+								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
 							}
-                    	]
-                    },
-                    {
-                    	label: "Оценка функционального руководителя",
-                    	backgroundColor: "rgba(255,99,132,0.2)",
-                    	borderColor: "rgba(255,99,132,1)",
-                    	pointBackgroundColor: "rgba(255,99,132,1)",
-                    	pointBorderColor: "#fff",
-                    	pointHoverBackgroundColor: "#fff",
-                    	pointHoverBorderColor: "rgba(255,99,132,1)",
-                    	data: [
-                            @foreach (var c in competencies)
+						]
+					},
+					{
+						label: "Оценка функционального руководителя",
+						backgroundColor: "rgba(255,99,132,0.2)",
+						borderColor: "rgba(255,99,132,1)",
+						pointBackgroundColor: "rgba(255,99,132,1)",
+						pointBorderColor: "#fff",
+						pointHoverBackgroundColor: "#fff",
+						pointHoverBorderColor: "rgba(255,99,132,1)",
+						data: [
+							@foreach (var c in competencies)
 							{
 								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
 								var count = evs.Count();
 								var sum = evs.Sum(ev => ev.ReviewValue);
-                                @(((sum - count) * 120 / (count * 2)).ToString().Replace(',', '.') + ", ")
+								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
 							}
-                    	]
-                    },
+						]
+					},
 					{
 						label: "Общая оценка",
 						backgroundColor: "rgba(94,216,155,0.2)",
@@ -282,34 +283,33 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(94,216,155,1)",
 						data: [
-							@foreach(var c in competencies)
+							@foreach (var c in competencies)
 							{
 								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
 								var count = evs.Count();
-								var sum = evs.Sum(ev => (ev.ReviewValue + ev.ManagerValue) / 2);
-								@(((sum - count) * 120 / (count * 2)).ToString().Replace(',', '.') + ", ")
+								var sum = evs.Sum(ev => (ev.ReviewValue + ev.ManagerValue)/2);
+								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
 							}
 						]
 					},
-                    {
-                    	label: "Оценка сотрудника",
-                    	backgroundColor: "rgba(100,55,132,0.2)",
-                    	borderColor: "rgba(100,55,132,1)",
-                    	pointBackgroundColor: "rgba(100,55,132,1)",
-                    	pointBorderColor: "#fff",
-                    	pointHoverBackgroundColor: "#fff",
-                    	pointHoverBorderColor: "rgba(100,55,132,1)",
-                    	data: [
+					{
+						label: "Оценка сотрудника",
+						backgroundColor: "rgba(100,55,132,0.2)",
+						borderColor: "rgba(100,55,132,1)",
+						pointBackgroundColor: "rgba(100,55,132,1)",
+						pointBorderColor: "#fff",
+						pointHoverBackgroundColor: "#fff",
+						pointHoverBorderColor: "rgba(100,55,132,1)",
+						data: [
 							@foreach (var c in competencies)
 							{
 								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
 								var count = evs.Count();
 								var sum = evs.Sum(ev => ev.Value);
-								@(((sum - count) * 120 / (count * 2)).ToString().Replace(',', '.') + ", ")
+								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
 							}
-                    	]
-                    }
-
+						]
+					}
 				]
 
 			};
@@ -332,4 +332,61 @@
 			});
 		</script>
 	}
-}
+
+	@if (evaluationsForDevChart != null && evaluationsForDevChart.Any())
+	{
+		<script type="text/javascript">
+			var data = {
+				labels: [@string.Join(", ", Enumerable.Range(1, evaluationsForDevChart.Count).Select(s=>s.ToString()))],
+
+				datasets: [
+					{
+						backgroundColor: [
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(255, 206, 86, 0.2)',
+							'rgba(75, 192, 192, 0.2)',
+						],
+						borderColor: [
+							'rgba(255,99,132,1)',
+							'rgba(54, 162, 235, 1)',
+							'rgba(255, 206, 86, 1)',
+							'rgba(75, 192, 192, 1)',
+						],
+						borderWidth: 1,
+						data: [
+							@string.Join(", ", evaluationsForDevChart.Select(s=>s.GetPercent().ToString()))
+						],
+					}
+				]
+			};
+
+			$(document).ready(function () {
+				var ctx = document.getElementById("over-time-chart");
+				new Chart(ctx, {
+					type: "line",
+
+					data: data,
+					options: {
+
+						legend: {
+							display: false,
+						},
+						scales: {
+							xAxes: [{
+								stacked: true,
+
+							}],
+							yAxes: [{
+								stacked: true,
+								ticks: {
+
+								}
+							}]
+						}
+					}
+				});
+			});
+		</script>
+	}
+}|
