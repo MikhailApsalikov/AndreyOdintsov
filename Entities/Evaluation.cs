@@ -13,14 +13,25 @@
 
 		public int Id { get; set; }
 		public DateTime Passed { get; set; }
+
+		/// <summary>
+		///     Дата ревью функционального
+		/// </summary>
 		public DateTime? Reviewed { get; set; }
+
 		public int ExamineeId { get; set; }
 		public int? ExaminerId { get; set; }
 		public double? ReviewedResult { get; set; }
 		public int? IndicatorsCount { get; set; }
 		public int? ManagerId { get; set; }
 		public double? ManagerResult { get; set; }
+
+		/// <summary>
+		///     Дата ревью административного
+		/// </summary>
 		public DateTime? ManagerReviewed { get; set; }
+
+		public virtual Account Manager { get; set; }
 
 		public virtual Account Examinee { get; set; }
 		public virtual Account Examinier { get; set; }
@@ -28,7 +39,6 @@
 		[SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
 		public virtual ICollection<EvaluationValue> EvaluationValues { get; set; }
 
-		public virtual Account Manager { get; set; }
 
 		public double? GetPercent()
 		{

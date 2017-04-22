@@ -244,6 +244,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj">
+      <Project>{BB6FBE09-D387-45D4-B42F-37B594E2433A}</Project>
+      <Name>BusinessLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{372B7846-3431-41C3-B28E-6570CCF17989}</Project>
       <Name>Common</Name>

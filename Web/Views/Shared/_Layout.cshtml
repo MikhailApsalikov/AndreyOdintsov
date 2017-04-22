@@ -17,17 +17,14 @@
 
             <ul class="nav navbar-nav">
                 @if (User.IsInRole("Admin") || User.IsInRole("FunctionalManager") || User.IsInRole("AdministrativeManager") || User.IsInRole("DirectManager"))
-				{
-					<li>
-						@Html.ActionLink("Сотрудники", controllerName: "Accounts", actionName: "Index")
-					</li>
-				}
-				else
-				{
-                    <li>
-                        @Html.ActionLink("Оценка компетенций", controllerName: "Evaluation", actionName: "Pass")
-                    </li>
+                {
+	                <li>
+		                @Html.ActionLink("Сотрудники", controllerName: "Accounts", actionName: "Index")
+	                </li>
                 }
+				<li>
+					@Html.ActionLink("Оценка компетенций", controllerName: "Evaluation", actionName: "Pass")
+				</li>
                 @if (User.IsInRole("Admin"))
                 {
                     <li>

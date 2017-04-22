@@ -14,42 +14,42 @@
 <h2>Подробно о @Model.FullName</h2>
 
 <div>
-    <hr />
-    @if (User.IsInRole("Admin"))
+	<hr />
+	@if (User.IsInRole("Admin"))
 	{
-        <p>
-            @Html.ActionLink("Изменить", "Edit", new { id = Model.Id }) |
-            @Html.ActionLink("Сбросить пароль", "ResetPassword", new { id = Model.Id })
-        </p>
+		<p>
+			@Html.ActionLink("Изменить", "Edit", new { id = Model.Id }) |
+			@Html.ActionLink("Сбросить пароль", "ResetPassword", new { id = Model.Id })
+		</p>
 	}
-    <dl class="dl-horizontal">
-        <dt>@Html.DisplayNameFor(model => model.Code)</dt>
-        <dd>@Html.DisplayFor(model => model.Code)</dd>
+	<dl class="dl-horizontal">
+		<dt>@Html.DisplayNameFor(model => model.Code)</dt>
+		<dd>@Html.DisplayFor(model => model.Code)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Region)</dt>
-        <dd>@Html.DisplayFor(model => model.Region)</dd>
+		<dt>@Html.DisplayNameFor(model => model.Region)</dt>
+		<dd>@Html.DisplayFor(model => model.Region)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.MicroRegion)</dt>
-        <dd>@Html.DisplayFor(model => model.MicroRegion)</dd>
+		<dt>@Html.DisplayNameFor(model => model.MicroRegion)</dt>
+		<dd>@Html.DisplayFor(model => model.MicroRegion)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Department)</dt>
-        <dd>@Html.DisplayFor(model => model.Department)</dd>
+		<dt>@Html.DisplayNameFor(model => model.Department)</dt>
+		<dd>@Html.DisplayFor(model => model.Department)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Position)</dt>
-        <dd>@Html.DisplayFor(model => model.Position)</dd>
+		<dt>@Html.DisplayNameFor(model => model.Position)</dt>
+		<dd>@Html.DisplayFor(model => model.Position)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.FullName)</dt>
-        <dd>@Html.DisplayFor(model => model.FullName)</dd>
+		<dt>@Html.DisplayNameFor(model => model.FullName)</dt>
+		<dd>@Html.DisplayFor(model => model.FullName)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Sex)</dt>
-        <dd>@Html.DisplayFor(model => model.Sex)</dd>
+		<dt>@Html.DisplayNameFor(model => model.Sex)</dt>
+		<dd>@Html.DisplayFor(model => model.Sex)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Login)</dt>
-        <dd>@Html.DisplayFor(model => model.Login)</dd>
+		<dt>@Html.DisplayNameFor(model => model.Login)</dt>
+		<dd>@Html.DisplayFor(model => model.Login)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Active)</dt>
-        <dd>@Html.DisplayFor(model => model.Active)</dd>
-		
+		<dt>@Html.DisplayNameFor(model => model.Active)</dt>
+		<dd>@Html.DisplayFor(model => model.Active)</dd>
+
 		@if (Model.Principal != null)
 		{
 			<dt>@Html.DisplayNameFor(model => model.Principal)</dt>
@@ -66,28 +66,28 @@
 			<dd>@Html.ActionLink(Model.Manager.FullName, "Details", new { Id = Model.Manager.Id })</dd>
 		}
 
-        @if (Model.Evaluations.Count > 0)
+		@if (Model.Evaluations.Count > 0)
 		{
-            <dt>
-                @Html.DisplayNameFor(model => model.Evaluations)
-            </dt>
+			<dt>
+				@Html.DisplayNameFor(model => model.Evaluations)
+			</dt>
 
-            <dd>
-                <table class="table">
-                    <tr class="info">
-                        <th>Дата оценки сотрудника</th>
-                        <th>Дата ревью функц. руководителя</th>
-                        <th>Дата ревью админ. руководителя</th>
-                        <th>Оценка сотрудника</th>
-                        <th>Оценка функц. руководителя</th>
-                        <th>Оценка админ. руководителя</th>
-                        <th>Минимальный/Средний/Максимальный балл</th>
-                        <th>Общий результат оценки, %</th>
-                        <th></th>
-                    </tr>
-                    @foreach (var evaluation in Model.Evaluations.OrderByDescending(e => e.Passed))
+			<dd>
+				<table class="table">
+					<tr class="info">
+						<th>Дата оценки сотрудника</th>
+						<th>Дата ревью функц. руководителя</th>
+						<th>Дата ревью админ. руководителя</th>
+						<th>Оценка сотрудника</th>
+						<th>Оценка функц. руководителя</th>
+						<th>Оценка админ. руководителя</th>
+						<th>Минимальный/Средний/Максимальный балл</th>
+						<th>Общий результат оценки, %</th>
+						<th></th>
+					</tr>
+					@foreach (var evaluation in Model.Evaluations.OrderByDescending(e => e.Passed))
 					{
-                        <tr>
+						<tr>
 							<td>@evaluation.Passed</td>
 							<td>@evaluation.Reviewed</td>
 							<td>@evaluation.ManagerReviewed</td>
@@ -98,32 +98,32 @@
 								@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
 							</td>
 							<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
-                            <td>
-                                @Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
+							<td>
+								@Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
 
-                                @if ((User.IsInRole("FunctionalManager") && Model.Department == account.Department && evaluation.Examinier == null) ||
-									 (Model.Manager == account && evaluation.Manager == null))
+								@if (((User.IsInRole("FunctionalManager") || User.IsInRole("AdministrativeManager")) && Model.Department == account.Department && evaluation.Examinier == null) ||
+						 ((Model.Manager == account || Model.AdministrativeManager == account) && evaluation.Manager == null))
 								{
-                                    <br />
-                                    @Html.ActionLink("Выполнить ревью", "Review", "Evaluation", new { id = evaluation.Id }, null)
+									<br />
+									@Html.ActionLink("Выполнить ревью", "Review", "Evaluation", new { id = evaluation.Id }, null)
 								}
-                            </td>
-                        </tr>
+							</td>
+						</tr>
 					}
-                </table>
-            </dd>
+				</table>
+			</dd>
 		}
 
-        @if (Model.EvaluationsReviews.Count > 0)
+		@if (Model.EvaluationsReviews.Count > 0)
 		{
-            <dt>
-                @Html.DisplayNameFor(model => model.EvaluationsReviews)
-            </dt>
+			<dt>
+				@Html.DisplayNameFor(model => model.EvaluationsReviews)
+			</dt>
 
-            <dd>
-                <table class="table">
+			<dd>
+				<table class="table">
 					<tr class="info">
-                        <th>Сотрудник</th>
+						<th>Сотрудник</th>
 						<th>Дата оценки сотрудника</th>
 						<th>Дата ревью функц. руководителя</th>
 						<th>Дата ревью админ. руководителя</th>
@@ -135,10 +135,10 @@
 						<th>Общий результат оценки, %</th>
 						<th></th>
 					</tr>
-                    @foreach (var evaluation in Model.EvaluationsReviews.OrderByDescending(e => e.Passed))
+					@foreach (var evaluation in Model.EvaluationsReviews.OrderByDescending(e => e.Passed))
 					{
 						<tr>
-                            <td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new { Id = evaluation.Examinee.Id }, null)</td>
+							<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new { Id = evaluation.Examinee.Id }, null)</td>
 							<td>@evaluation.Passed</td>
 							<td>@evaluation.Reviewed</td>
 							<td>@evaluation.ManagerReviewed</td>
@@ -155,87 +155,87 @@
 							</td>
 						</tr>
 					}
-                </table>
-            </dd>
+				</table>
+			</dd>
 		}
 
-        @if (Model.EvaluationsManages.Count > 0)
+		@if (Model.EvaluationsManages.Count > 0)
 		{
-            <dt>
-                @Html.DisplayNameFor(model => model.EvaluationsManages)
-            </dt>
+			<dt>
+				@Html.DisplayNameFor(model => model.EvaluationsManages)
+			</dt>
 
-            <dd>
-                <table class="table">
-                    <tr class="info">
-                        <th>Cотрудник</th>
-                        <th>Дата оценки сотрудника</th>
-                        <th>Дата ревью функц. руководителя</th>
-                        <th>Дата ревью админ. руководителя</th>
+			<dd>
+				<table class="table">
+					<tr class="info">
+						<th>Cотрудник</th>
+						<th>Дата оценки сотрудника</th>
+						<th>Дата ревью функц. руководителя</th>
+						<th>Дата ревью админ. руководителя</th>
 						<th>Должность сотрудника</th>
-                        <th>Оценка сотрудника</th>
-                        <th>Оценка функц. руководителя</th>
-                        <th>Оценка админ. руководителя</th>
-                        <th>Минимальный/Средний/Максимальный балл</th>
-                        <th>Общий результат оценки, %</th>
-                        <th></th>
-                    </tr>
-                    @foreach (var evaluation in Model.EvaluationsManages.OrderByDescending(e => e.Passed))
+						<th>Оценка сотрудника</th>
+						<th>Оценка функц. руководителя</th>
+						<th>Оценка админ. руководителя</th>
+						<th>Минимальный/Средний/Максимальный балл</th>
+						<th>Общий результат оценки, %</th>
+						<th></th>
+					</tr>
+					@foreach (var evaluation in Model.EvaluationsManages.OrderByDescending(e => e.Passed))
 					{
-                        <tr>
-                            <td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new { Id = evaluation.Examinee.Id }, null)</td>
-                            <td>@evaluation.Passed</td>
-                            <td>@evaluation.Reviewed</td>
-                            <td>@evaluation.ManagerReviewed</td>
+						<tr>
+							<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new { Id = evaluation.Examinee.Id }, null)</td>
+							<td>@evaluation.Passed</td>
+							<td>@evaluation.Reviewed</td>
+							<td>@evaluation.ManagerReviewed</td>
 							<td>@evaluation.Examinee.Position</td>
-                            <td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
-                            <td>@evaluation.ReviewedResult</td>
-                            <td>@evaluation.ManagerResult</td>
-                            <td>
-                                @evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
-                            </td>
-                            <td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
-                            <td>
-                                @Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
-                            </td>
-                        </tr>
+							<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
+							<td>@evaluation.ReviewedResult</td>
+							<td>@evaluation.ManagerResult</td>
+							<td>
+								@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
+							</td>
+							<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
+							<td>
+								@Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
+							</td>
+						</tr>
 					}
-                </table>
-            </dd>
+				</table>
+			</dd>
 		}
 
-    </dl>
-    @if (lastReviewedEvaluation != null)
+	</dl>
+	@if (lastReviewedEvaluation != null)
 	{
-        <h4>График компетенций:</h4>
-        <div class="chart-container chart-radar"><canvas id="chart"></canvas></div>
+		<h4>График компетенций:</h4>
+		<div class="chart-container chart-radar"><canvas id="chart"></canvas></div>
 	}
 </div>
 
 @section scripts {
-    <script src="~/Scripts/jquery-2.2.3.min.js"></script>
-    <script src="~/Scripts/Chart.min.js"></script>
+	<script src="~/Scripts/jquery-2.2.3.min.js"></script>
+	<script src="~/Scripts/Chart.min.js"></script>
 
-    @if (lastReviewedEvaluation != null)
+	@if (lastReviewedEvaluation != null)
 	{
-        <script type="text/javascript">
-            var data = {
-                labels: [
+		<script type="text/javascript">
+			var data = {
+				labels: [
                     @foreach (var c in competencies)
 					{
                         @Html.Raw('"' + competencyList.FirstOrDefault(cl => cl.Id == c).Title + "\",")
 					}
-                ],
-                datasets: [
+				],
+				datasets: [
                     {
-                        label: "Оценка административного руководителя",
-                        backgroundColor: "rgba(179,181,198,0.2)",
-                        borderColor: "rgba(179,181,198,1)",
-                        pointBackgroundColor: "rgba(179,181,198,1)",
-                        pointBorderColor: "#fff",
-                        pointHoverBackgroundColor: "#fff",
-                        pointHoverBorderColor: "rgba(179,181,198,1)",
-                        data: [
+                    	label: "Оценка административного руководителя",
+                    	backgroundColor: "rgba(179,181,198,0.2)",
+                    	borderColor: "rgba(179,181,198,1)",
+                    	pointBackgroundColor: "rgba(179,181,198,1)",
+                    	pointBorderColor: "#fff",
+                    	pointHoverBackgroundColor: "#fff",
+                    	pointHoverBorderColor: "rgba(179,181,198,1)",
+                    	data: [
                             @foreach (var c in competencies)
 							{
 								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
@@ -243,17 +243,17 @@
 								var sum = evs.Sum(ev => ev.ManagerValue);
                                 @(((sum - count) * 120 / (count * 2)).ToString().Replace(',', '.') + ", ")
 							}
-                        ]
+                    	]
                     },
                     {
-                        label: "Оценка функционального руководителя",
-                        backgroundColor: "rgba(255,99,132,0.2)",
-                        borderColor: "rgba(255,99,132,1)",
-                        pointBackgroundColor: "rgba(255,99,132,1)",
-                        pointBorderColor: "#fff",
-                        pointHoverBackgroundColor: "#fff",
-                        pointHoverBorderColor: "rgba(255,99,132,1)",
-                        data: [
+                    	label: "Оценка функционального руководителя",
+                    	backgroundColor: "rgba(255,99,132,0.2)",
+                    	borderColor: "rgba(255,99,132,1)",
+                    	pointBackgroundColor: "rgba(255,99,132,1)",
+                    	pointBorderColor: "#fff",
+                    	pointHoverBackgroundColor: "#fff",
+                    	pointHoverBorderColor: "rgba(255,99,132,1)",
+                    	data: [
                             @foreach (var c in competencies)
 							{
 								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
@@ -261,7 +261,7 @@
 								var sum = evs.Sum(ev => ev.ReviewValue);
                                 @(((sum - count) * 120 / (count * 2)).ToString().Replace(',', '.') + ", ")
 							}
-                        ]
+                    	]
                     },
 					{
 						label: "Общая оценка",
@@ -282,14 +282,14 @@
 						]
 					},
                     {
-                        label: "Оценка сотрудника",
-                        backgroundColor: "rgba(100,55,132,0.2)",
-                        borderColor: "rgba(100,55,132,1)",
-                        pointBackgroundColor: "rgba(100,55,132,1)",
-                        pointBorderColor: "#fff",
-                        pointHoverBackgroundColor: "#fff",
-                        pointHoverBorderColor: "rgba(100,55,132,1)",
-                        data: [
+                    	label: "Оценка сотрудника",
+                    	backgroundColor: "rgba(100,55,132,0.2)",
+                    	borderColor: "rgba(100,55,132,1)",
+                    	pointBackgroundColor: "rgba(100,55,132,1)",
+                    	pointBorderColor: "#fff",
+                    	pointHoverBackgroundColor: "#fff",
+                    	pointHoverBorderColor: "rgba(100,55,132,1)",
+                    	data: [
 							@foreach (var c in competencies)
 							{
 								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
@@ -297,29 +297,29 @@
 								var sum = evs.Sum(ev => ev.Value);
 								@(((sum - count) * 120 / (count * 2)).ToString().Replace(',', '.') + ", ")
 							}
-                        ]
+                    	]
                     }
 
-                ]
+				]
 
-            };
+			};
 
-            $(document).ready(function () {
-                var ctx = document.getElementById("chart");
-                new Chart(ctx, {
-                    type: "radar",
-                    data: data,
-                    options: {
-                        scale: {
-                            ticks: {
-                                max: 120,
-                                min: 0,
-                                stepSize: 20,
-                            }
-                        }
-                    }
-                });
-            });
-        </script>
-    }
+			$(document).ready(function () {
+				var ctx = document.getElementById("chart");
+				new Chart(ctx, {
+					type: "radar",
+					data: data,
+					options: {
+						scale: {
+							ticks: {
+								max: 120,
+								min: 0,
+								stepSize: 20,
+							}
+						}
+					}
+				});
+			});
+		</script>
+	}
 }

@@ -4,6 +4,7 @@
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Web.Mvc;
+	using BusinessLogic;
 	using Common.Enums;
 	using Entities;
 	using XmlEntities;
@@ -78,9 +79,8 @@
 
 			return RedirectToAction("Index", "Home");
 		}
-
-		// GET: Evaluation/Review/5  Для начальника отдела
-		[Authorize(Roles = "FunctionalManager,AdministrativeManager,DirectManager")]
+		
+		[Authorize(Roles = "FunctionalManager, AdministrativeManager")]
 		public ActionResult Review(int id)
 		{
 			PrepareComtetencyList();
@@ -89,7 +89,7 @@
 			Evaluation evaluation = ViewBag.Evaluation = db.Evaluations.Find(id);
 			Account examinee = ViewBag.Examinee = evaluation.Examinee;
 
-			if (examinee.Department != currentAccount.Department && examinee.Manager != currentAccount)
+			if (!EvaluationWorkflow.CanBeReviewed(currentAccount, examinee))
 			{
 				throw new UnauthorizedAccessException();
 			}
@@ -97,7 +97,7 @@
 			return View();
 		}
 
-		[Authorize(Roles = "FunctionalManager,AdministrativeManager,DirectManager")]
+		[Authorize(Roles = "FunctionalManager, AdministrativeManager")]
 		[HttpPost, ActionName("Review")]
 		[ValidateAntiForgeryToken]
 		public ActionResult ReviewPost(int id)
@@ -108,7 +108,7 @@
 			Evaluation evaluation = ViewBag.Evaluation = db.Evaluations.Find(id);
 			Account examinee = ViewBag.Examinee = evaluation.Examinee;
 
-			if (examinee.Department != currentAccount.Department && examinee.Manager != currentAccount)
+			if (!EvaluationWorkflow.CanBeReviewed(currentAccount, examinee))
 			{
 				throw new UnauthorizedAccessException();
 			}
@@ -120,41 +120,32 @@
 				return View();
 			}
 
-			if (currentAccount.Role == Role.FunctionalManager && evaluation.Examinier == null)
+			if (EvaluationWorkflow.CanBeReviewedAsFunctionalManager(currentAccount, examinee))
 			{
 				evaluation.Reviewed = DateTime.Now;
 				currentAccount.EvaluationsReviews.Add(evaluation);
-			}
-			else if (currentAccount == examinee.Manager)
-			{
-				evaluation.ManagerReviewed = DateTime.Now;
-				currentAccount.EvaluationsManages.Add(evaluation);
-			}
-
-			foreach (dynamic kv in ViewBag.IndicatorValues)
-			{
-				EvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
-					ev => ev.Competency == int.Parse(kv.Key.Split('_')[1]) &&
-					      ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
-
-
-				if (currentAccount.Role == Role.FunctionalManager && evaluation.Examinier == null)
+				foreach (dynamic kv in ViewBag.IndicatorValues)
 				{
+					EvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
+						ev => ev.Competency == int.Parse(kv.Key.Split('_')[1]) &&
+							  ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
 					evaluationValue.ReviewValue = double.Parse(kv.Value.Replace(".", ","));
 				}
-				else if (currentAccount == examinee.Manager)
-				{
-					evaluationValue.ManagerValue = double.Parse(kv.Value.Replace(".", ","));
-				}
-			}
-
-			if (currentAccount.Role == Role.FunctionalManager && evaluation.Examinier == null)
-			{
 				evaluation.Examinier = currentAccount;
 				evaluation.ReviewedResult = evaluation.EvaluationValues.Sum(ev => ev.ReviewValue ?? 0);
 			}
-			else if (currentAccount == examinee.Manager)
+
+			if (EvaluationWorkflow.CanBeReviewedAsAdministrativeManager(currentAccount, examinee))
 			{
+				evaluation.ManagerReviewed = DateTime.Now;
+				currentAccount.EvaluationsManages.Add(evaluation);
+				foreach (dynamic kv in ViewBag.IndicatorValues)
+				{
+					EvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
+						ev => ev.Competency == int.Parse(kv.Key.Split('_')[1]) &&
+							  ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
+					evaluationValue.ManagerValue = double.Parse(kv.Value.Replace(".", ","));
+				}
 				evaluation.Manager = currentAccount;
 				evaluation.ManagerResult = evaluation.EvaluationValues.Sum(ev => ev.ManagerValue ?? 0);
 			}
@@ -186,7 +177,7 @@
 		private void PrepareIndicatorsForm()
 		{
 			ViewBag.IndicatorErrors = new List<string>();
-			ViewBag.IndicatorValues = new Dictionary<string, string>();
+			ViewBag.IndicatorValues  = new Dictionary<string, string>();
 		}
 
 		private void PrepareComtetencyList()
