@@ -1,4 +1,6 @@
-﻿@model Account
+﻿@using System.Activities
+@using BusinessLogic
+@model Account
 
 @{
 	ViewBag.Title = "Подробно о сотруднике";
@@ -101,8 +103,7 @@
 							<td>
 								@Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
 
-								@if (((User.IsInRole("FunctionalManager") || User.IsInRole("AdministrativeManager")) && Model.Department == account.Department && evaluation.Examinier == null) ||
-						 ((Model.Manager == account || Model.AdministrativeManager == account) && evaluation.Manager == null))
+								@if (EvaluationWorkflow.CanBeReviewedBy(account, Model))
 								{
 									<br />
 									@Html.ActionLink("Выполнить ревью", "Review", "Evaluation", new { id = evaluation.Id }, null)

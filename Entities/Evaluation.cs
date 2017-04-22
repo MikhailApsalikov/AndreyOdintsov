@@ -45,6 +45,22 @@
 			// Формула подсчета результата в процентах: (X - Xmin) * 100 / (Xmax - Xmin). 
 			// X - это (ReviewedResult + ManagerResult) / 2, Xmin - IndicatorsCount, Xmax - IndicatorsCount * 3
 			// Умножаем на 120 т.к. по ТЗ максимальный балл - это 120%.
+
+			if (!ReviewedResult.HasValue && !ManagerResult.HasValue)
+			{
+				return null;
+			}
+
+			if (ReviewedResult.HasValue && !ManagerResult.HasValue)
+			{
+				return (ReviewedResult- IndicatorsCount) * 120 / (IndicatorsCount * 2);
+			}
+
+			if (!ReviewedResult.HasValue)
+			{
+				return (ManagerResult - IndicatorsCount) * 120 / (IndicatorsCount * 2);
+			}
+
 			return ((ReviewedResult + ManagerResult) / 2 - IndicatorsCount) * 120 / (IndicatorsCount * 2);
 		}
 	}

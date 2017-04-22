@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using BusinessLogic
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -22,9 +23,12 @@
 		                @Html.ActionLink("Сотрудники", controllerName: "Accounts", actionName: "Index")
 	                </li>
                 }
-				<li>
-					@Html.ActionLink("Оценка компетенций", controllerName: "Evaluation", actionName: "Pass")
-				</li>
+				@if (EvaluationWorkflow.CanPass(User?.Identity?.Name))
+				{
+					<li>
+						@Html.ActionLink("Оценка компетенций", controllerName: "Evaluation", actionName: "Pass")
+					</li>
+				}
                 @if (User.IsInRole("Admin"))
                 {
                     <li>

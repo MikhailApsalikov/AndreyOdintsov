@@ -1,31 +1,46 @@
 ﻿namespace BusinessLogic
 {
+	using System.Linq;
 	using Common.Enums;
 	using Entities;
 
 	public static class EvaluationWorkflow
 	{
-		public static bool CanBeReviewed(Account currentAccount, Account examinee)
+		public static bool CanPass(string examineeName)
 		{
-			return CanBeReviewedAsFunctionalManager(currentAccount, examinee) || CanBeReviewedAsAdministrativeManager(currentAccount, examinee);
-		}
-
-		public static bool CanBeReviewedAsFunctionalManager(Account currentAccount, Account examinee)
-		{
-			if (currentAccount == null || examinee == null)
+			Account examinee = new AccountsDbContext().Accounts.FirstOrDefault(a => a.Login == examineeName);
+			if (examinee == null)
 			{
 				return false;
 			}
-			return (examinee.Department == currentAccount.Department || examinee.Manager == currentAccount) && currentAccount.Role == Role.FunctionalManager;
+			return examinee.Manager != null || examinee.AdministrativeManager != null || examinee.Role == Role.Employee;
 		}
 
-		public static bool CanBeReviewedAsAdministrativeManager(Account currentAccount, Account examinee)
+		public static bool CanBeReviewedBy(Account manager, Account examinee)
 		{
-			if (currentAccount == null || examinee == null)
+			return CanBeReviewedAsFunctionalManager(manager, examinee) || CanBeReviewedAsAdministrativeManager(manager, examinee);
+		}
+
+		public static bool CanBeReviewedAsFunctionalManager(Account manager, Account examinee)
+		{
+			if (manager == null || examinee == null)
 			{
 				return false;
 			}
-			return examinee.AdministrativeManager == currentAccount && currentAccount.Role == Role.AdministrativeManager;
+			if (examinee.Manager != null)
+			{
+				return examinee.Manager == manager;
+			}
+			return examinee.Department == manager.Department && manager.Role == Role.FunctionalManager;
+		}
+
+		public static bool CanBeReviewedAsAdministrativeManager(Account manager, Account examinee)
+		{
+			if (manager == null || examinee == null)
+			{
+				return false;
+			}
+			return examinee.AdministrativeManager == manager;
 		}
 	}
 }

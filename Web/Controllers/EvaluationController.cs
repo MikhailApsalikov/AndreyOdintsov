@@ -89,7 +89,7 @@
 			Evaluation evaluation = ViewBag.Evaluation = db.Evaluations.Find(id);
 			Account examinee = ViewBag.Examinee = evaluation.Examinee;
 
-			if (!EvaluationWorkflow.CanBeReviewed(currentAccount, examinee))
+			if (!EvaluationWorkflow.CanBeReviewedBy(currentAccount, examinee))
 			{
 				throw new UnauthorizedAccessException();
 			}
@@ -108,7 +108,7 @@
 			Evaluation evaluation = ViewBag.Evaluation = db.Evaluations.Find(id);
 			Account examinee = ViewBag.Examinee = evaluation.Examinee;
 
-			if (!EvaluationWorkflow.CanBeReviewed(currentAccount, examinee))
+			if (!EvaluationWorkflow.CanBeReviewedBy(currentAccount, examinee))
 			{
 				throw new UnauthorizedAccessException();
 			}
@@ -150,10 +150,8 @@
 				evaluation.ManagerResult = evaluation.EvaluationValues.Sum(ev => ev.ManagerValue ?? 0);
 			}
 
-			if (evaluation.Manager != null && evaluation.Examinier != null)
-			{
-				evaluation.Examinee.LastEvaluationPercent = evaluation.GetPercent();
-			}
+			
+			evaluation.Examinee.LastEvaluationPercent = evaluation.GetPercent();
 
 			db.SaveChanges();
 			return RedirectToAction("Details", "Accounts", new {id = examinee.Id});
