@@ -28,6 +28,12 @@ label.sum::after {
 
 .chart-container.chart-radar {
     max-width: 500px;
+	float: left;
+}
+
+.chart-container.chart-employeee-development {
+    max-width: 500px;
+	float: right;
 }
 
 .chart-container.chart-bar {

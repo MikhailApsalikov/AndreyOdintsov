@@ -84,7 +84,7 @@
 
 		public Evaluation GetLastReviewedEvaluation()
 		{
-			Evaluation evaluation = Evaluations.Where(e => e.Examinier != null && e.Manager != null)
+			Evaluation evaluation = Evaluations.Where(e => e.Examinier != null || e.Manager != null)
 				.OrderByDescending(e => e.Reviewed).FirstOrDefault();
 
 			return evaluation;

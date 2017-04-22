@@ -208,8 +208,17 @@
 	</dl>
 	@if (lastReviewedEvaluation != null)
 	{
-		<h4>График компетенций:</h4>
-		<div class="chart-container chart-radar"><canvas id="chart"></canvas></div>
+		<div class="chart-container chart-radar">
+			<h4>График компетенций:</h4>
+			<canvas id="chart"></canvas>
+		</div>
+	}
+	@if (Model.Evaluations != null && Model.Evaluations.Any())
+	{
+		<div class="chart-container chart-employeee-development">
+			<h4>График развития сотрудника:</h4>
+			<canvas id="over-time-chart"></canvas>
+		</div>
 	}
 </div>
 

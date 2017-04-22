@@ -20,9 +20,15 @@
 		public DateTime? Reviewed { get; set; }
 
 		public int ExamineeId { get; set; }
+		/// <summary>
+		/// Функциональный
+		/// </summary>
 		public int? ExaminerId { get; set; }
 		public double? ReviewedResult { get; set; }
 		public int? IndicatorsCount { get; set; }
+		/// <summary>
+		/// Административный
+		/// </summary>
 		public int? ManagerId { get; set; }
 		public double? ManagerResult { get; set; }
 

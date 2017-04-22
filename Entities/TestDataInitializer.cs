@@ -13,6 +13,78 @@
 		protected override void Seed(AccountsDbContext context)
 		{
 			InitializeTestAccounts(context);
+			context.SaveChanges();
+			InitializeTestEvaluations(context);
+			context.SaveChanges();
+		}
+
+		private void InitializeTestEvaluations(AccountsDbContext context)
+		{
+			if (context.Evaluations.Any())
+			{
+				return;
+			}
+
+			var evaluations = new List<Evaluation>
+			{
+				new Evaluation
+				{
+					ExamineeId = 7,
+					ExaminerId = 2,
+					ManagerId = 3,
+					IndicatorsCount = 11,
+					ManagerResult = 33,
+					ReviewedResult = 11,
+					Passed = DateTime.Now.AddDays(-8),
+					Id = 1
+				},
+				new Evaluation
+				{
+					ExamineeId = 7,
+					ExaminerId = 2,
+					ManagerId = 3,
+					IndicatorsCount = 11,
+					ManagerResult = null,
+					ReviewedResult = 11,
+					Passed = DateTime.Now.AddDays(-5),
+					Id = 2
+				},
+				new Evaluation
+				{
+					ExamineeId = 7,
+					ExaminerId = 2,
+					ManagerId = 3,
+					IndicatorsCount = 11,
+					ManagerResult = 25,
+					ReviewedResult = null,
+					Passed = DateTime.Now.AddDays(-3),
+					Id = 3
+				},
+				new Evaluation
+				{
+					ExamineeId = 7,
+					ExaminerId = 2,
+					ManagerId = 3,
+					IndicatorsCount = 11,
+					ManagerResult = null,
+					ReviewedResult = null,
+					Passed = DateTime.Now.AddDays(-2),
+					Id = 4
+				},
+				new Evaluation
+				{
+					ExamineeId = 7,
+					ExaminerId = 2,
+					ManagerId = 3,
+					IndicatorsCount = 11,
+					ManagerResult = 15,
+					ReviewedResult = 11,
+					Passed = DateTime.Now,
+					Id = 5
+				}
+			};
+
+			context.Accounts.FirstOrDefault(s => s.Id == 7).Evaluations = evaluations;
 		}
 
 		private void InitializeTestAccounts(AccountsDbContext context)
