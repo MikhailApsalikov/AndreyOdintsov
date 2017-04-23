@@ -1,0 +1,10 @@
+﻿@{
+    ViewBag.Title = "Список профессиональных компетеций";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@foreach (string competencyList in ViewBag.CompetencyLists)
+{
+	<div>@competencyList</div>
+}

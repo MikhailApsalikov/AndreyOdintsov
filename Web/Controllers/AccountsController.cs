@@ -281,7 +281,7 @@
 			{
 				return HttpNotFound();
 			}
-			ViewBag.CompetencyList = ClWorkflow.GetDefault().Competencies;
+			ViewBag.CompetencyList = ClWorkflow.GetCompetencyList().Competencies;
 			account.Principal = Db.Accounts.FirstOrDefault(a => a.Department == account.Department && a.Role == Role.FunctionalManager);
 			return View(account);
 		}

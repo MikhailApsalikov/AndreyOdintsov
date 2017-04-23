@@ -1,10 +1,7 @@
 ﻿namespace Odintsov.Accounts.Web.Controllers
 {
 	using System;
-	using System.IO;
 	using System.Web.Mvc;
-	using System.Xml.Serialization;
-	using XmlEntities;
 
 	[Authorize]
 	public class HomeController : BaseController
@@ -18,7 +15,7 @@
 		[Authorize(Roles = "Admin")]
 		public ActionResult CompetencyList()
 		{
-			ViewBag.CompetencyList =  ClWorkflow.GetDefaultAsText();
+			ViewBag.CompetencyList = ClWorkflow.GetCompetencyListAsText();
 			return View();
 		}
 
@@ -30,7 +27,7 @@
 
 			try
 			{
-				ClWorkflow.SetDefaultAsText(text);
+				ClWorkflow.SetCompetencyListAsText(text);
 			}
 			catch (Exception e)
 			{
@@ -38,8 +35,15 @@
 				ViewBag.CompetencyList = text;
 				return View();
 			}
-			
+
 			return RedirectToAction("Index", "Home");
+		}
+
+		[Authorize(Roles = "Admin")]
+		public ActionResult ProfCompetencyLists()
+		{
+			ViewBag.CompetencyLists = ClWorkflow.GetProfCompetencyLists();
+			return View();
 		}
 	}
 }

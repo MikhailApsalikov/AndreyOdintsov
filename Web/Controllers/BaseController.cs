@@ -32,7 +32,7 @@
 		[NonAction]
 		protected void PrepareCompetencyList()
 		{
-			ViewBag.CompetencyList = ClWorkflow.GetDefault();
+			ViewBag.CompetencyList = ClWorkflow.GetCompetencyList();
 		}
 	}
 }
