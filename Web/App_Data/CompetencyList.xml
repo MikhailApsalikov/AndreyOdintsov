@@ -1,10 +1,8 @@
 <CompetencyList xml:space='preserve'>
 	<Сompetency Id='1' Title='Ориентация на результат' Enabled='true' xml:space='preserve'>
 		<Indicator Id='1' Title='Многозадачность' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Определяя приоритетность задач/каналов коммуникации допускает критические ошибки.
-				Работа с несколькими задачами одновременно успешна только при  постоянном контроле со стороны руководителя.
-			</LessThanExpectations>
+			<LessThanExpectations xml:space='preserve'>				Определяя приоритетность задач/каналов коммуникации допускает критические ошибки.
+				Работа с несколькими задачами одновременно успешна только при  постоянном контроле со стороны руководителя.</LessThanExpectations>
 			<EqualsToExpectations xml:space='preserve'>
 				Чаще всего эффективно распределяет приоритетность задач/каналов коммуникации.
 				Одновременная работа по нескольким задачам требует текущего контроля со стороны руководителя.

@@ -13,7 +13,7 @@
 
 		protected BaseController()
 		{
-			ClWorkflow = new CompetencyListWorkflow(Server.MapPath);
+			ClWorkflow = new CompetencyListWorkflow();
 		}
 
 		[NonAction]
