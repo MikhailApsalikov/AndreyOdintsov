@@ -13,7 +13,11 @@
 <h2>Оценка компетенций сотрудника</h2>
 <dl class="dl-horizontal">
 	<dt>ФИО, Должность</dt>
-	<dd>@examinee.FullName, @examinee.Position</dd>
+	<dd>@examinee.FullName, @examinee.Position 
+	@if (examinee.Position != evaluation?.Position)
+	{
+		<span>(Сотрудник прошел тест в должности "@evaluation.Position")</span>
+	}</dd>
 
 	<dt>Регион, Отдел</dt>
 	<dd>@examinee.Region (@examinee.MicroRegion), @examinee.Department</dd>
