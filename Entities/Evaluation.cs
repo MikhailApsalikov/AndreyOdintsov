@@ -45,6 +45,12 @@
 		[SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
 		public virtual ICollection<EvaluationValue> EvaluationValues { get; set; }
 
+		/// <summary>
+		/// https://github.com/MikhailApsalikov/AndreyOdintsov/issues/6
+		/// "Старая" должность
+		/// </summary>
+		public string Position { get; set; }
+
 
 		public double? GetPercent()
 		{

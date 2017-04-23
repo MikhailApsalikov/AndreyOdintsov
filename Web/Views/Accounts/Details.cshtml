@@ -81,6 +81,7 @@
 					<th>Дата оценки сотрудника</th>
 					<th>Дата ревью функц. руководителя</th>
 					<th>Дата ревью админ. руководителя</th>
+					<th>Должность сотрудника</th>
 					<th>Оценка сотрудника</th>
 					<th>Оценка функц. руководителя</th>
 					<th>Оценка админ. руководителя</th>
@@ -94,6 +95,7 @@
 						<td>@evaluation.Passed</td>
 						<td>@evaluation.Reviewed</td>
 						<td>@evaluation.ManagerReviewed</td>
+						<td>@evaluation.Position</td>
 						<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
 						<td>@evaluation.ReviewedResult</td>
 						<td>@evaluation.ManagerResult</td>
@@ -144,7 +146,7 @@
 						<td>@evaluation.Passed</td>
 						<td>@evaluation.Reviewed</td>
 						<td>@evaluation.ManagerReviewed</td>
-						<td>@evaluation.Examinee.Position</td>
+						<td>@evaluation.Position</td>
 						<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
 						<td>@evaluation.ReviewedResult</td>
 						<td>@evaluation.ManagerResult</td>
@@ -189,7 +191,7 @@
 						<td>@evaluation.Passed</td>
 						<td>@evaluation.Reviewed</td>
 						<td>@evaluation.ManagerReviewed</td>
-						<td>@evaluation.Examinee.Position</td>
+						<td>@evaluation.Position</td>
 						<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
 						<td>@evaluation.ReviewedResult</td>
 						<td>@evaluation.ManagerResult</td>
@@ -391,4 +393,4 @@
 			});
 		</script>
 	}
-}|
+}

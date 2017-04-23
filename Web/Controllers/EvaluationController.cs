@@ -57,6 +57,7 @@
 			var evaluation = new Evaluation();
 			evaluation.Examinee = currentAccount;
 			evaluation.Passed = DateTime.Now;
+			evaluation.Position = currentAccount.Position;
 
 			foreach (dynamic kv in ViewBag.IndicatorValues)
 			{
