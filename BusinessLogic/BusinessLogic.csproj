@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompetencyListWorkflow.cs" />
     <Compile Include="EvaluationWorkflow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -56,6 +57,10 @@
     <ProjectReference Include="..\Entities\Entities.csproj">
       <Project>{D603BFA7-A252-4654-8B85-25A2606F4E7B}</Project>
       <Name>Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XmlEntities\XmlEntities.csproj">
+      <Project>{C99155E6-AA4E-4A15-8CEA-FD8FDADFE4EA}</Project>
+      <Name>XmlEntities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

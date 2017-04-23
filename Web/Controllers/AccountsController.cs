@@ -21,10 +21,8 @@
 	using XmlEntities;
 
 	[Authorize]
-	public class AccountsController : Controller
+	public class AccountsController : BaseController
 	{
-		private readonly AccountsDbContext db = new AccountsDbContext();
-
 		[AllowAnonymous]
 		public ActionResult LogOn()
 		{
@@ -35,7 +33,7 @@
 		[AllowAnonymous]
 		public ActionResult LogOn(LogOnModel model)
 		{
-			Account account = db.Accounts.FirstOrDefault(x => x.Login.ToLower() == model.Login.ToLower());
+			Account account = Db.Accounts.FirstOrDefault(x => x.Login.ToLower() == model.Login.ToLower());
 
 			if (account == null)
 			{
@@ -61,7 +59,7 @@
 
 		public ActionResult ResetPassword(int id)
 		{
-			Account account = ViewBag.Account = db.Accounts.Find(id);
+			Account account = ViewBag.Account = Db.Accounts.Find(id);
 			if (account == null)
 			{
 				return HttpNotFound();
@@ -81,7 +79,7 @@
 		[ValidateAntiForgeryToken]
 		public ActionResult ResetPasswordPost(int id, ResetPassword resetPassword)
 		{
-			Account account = ViewBag.Account = db.Accounts.Find(id);
+			Account account = ViewBag.Account = Db.Accounts.Find(id);
 			if (account == null)
 			{
 				return HttpNotFound();
@@ -97,7 +95,7 @@
 			if (ModelState.IsValid)
 			{
 				account.SetPassword(resetPassword.Password);
-				db.SaveChanges();
+				Db.SaveChanges();
 				if (account.Login == User.Identity.Name)
 				{
 					return RedirectToAction("Index", "Home");
@@ -110,8 +108,7 @@
 
 		public ActionResult LogOff()
 		{
-			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-
+			ViewBag.CurrentAccount = GetCurrentAccount();
 			FormsAuthentication.SignOut();
 			return RedirectToAction("LogOn", "Accounts");
 		}
@@ -119,9 +116,9 @@
 		// GET: Accounts
 		public ActionResult Index(string sortOrder = "+FullName", string filter = "", int page = 1, int pageSize = 20)
 		{
-			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
+			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
 
-			IQueryable<Account> accounts = from a in db.Accounts select a;
+			IQueryable<Account> accounts = from a in Db.Accounts select a;
 
 			if (currentAccount.Team.Count > 0)
 			{
@@ -133,7 +130,7 @@
 			{
 				if (currentAccount.Team.Count > 0)
 				{
-					accounts = accounts.Union(db.Accounts
+					accounts = accounts.Union(Db.Accounts
 						.Where(a => a.Department == currentAccount.Department && a.Login != User.Identity.Name));
 				}
 				else
@@ -260,13 +257,13 @@
 
 			// =======================     Данные для фильтров      =============================
 
-			ViewBag.Regions = db.Accounts.GroupBy(a => a.Region)
+			ViewBag.Regions = Db.Accounts.GroupBy(a => a.Region)
 				.Select(grp => grp.FirstOrDefault().Region).Where(r => !string.IsNullOrEmpty(r)).ToList();
-			ViewBag.MicroRegions = db.Accounts.GroupBy(a => a.MicroRegion)
+			ViewBag.MicroRegions = Db.Accounts.GroupBy(a => a.MicroRegion)
 				.Select(grp => grp.FirstOrDefault().MicroRegion).Where(m => !string.IsNullOrEmpty(m)).ToList();
-			ViewBag.Departments = db.Accounts.GroupBy(a => a.Department)
+			ViewBag.Departments = Db.Accounts.GroupBy(a => a.Department)
 				.Select(grp => grp.FirstOrDefault().Department).Where(d => !string.IsNullOrEmpty(d)).ToList();
-			ViewBag.Positions = db.Accounts.GroupBy(a => a.Position)
+			ViewBag.Positions = Db.Accounts.GroupBy(a => a.Position)
 				.Select(grp => grp.FirstOrDefault().Position).Where(p => !string.IsNullOrEmpty(p)).ToList();
 
 
@@ -275,22 +272,17 @@
 
 			return View(accounts.ToPagedList(page, pageSize));
 		}
-		
+
 		public ActionResult Details(int? id)
 		{
-			if (id == null)
-			{
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-			}
-			Account account = db.Accounts.Find(id);
+			ViewBag.CurrentAccount = GetCurrentAccount();
+			Account account = id.HasValue ? Db.Accounts.Find(id) : ViewBag.CurrentAccount;
 			if (account == null)
 			{
 				return HttpNotFound();
 			}
-			ViewBag.CompetencyList = new CompetencyList(Server.MapPath("~/App_Data/CompetencyList.xml")).Competencies;
-			ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-			account.Principal = db.Accounts.FirstOrDefault(a => a.Department == account.Department && a.Role == Role.FunctionalManager);
-
+			ViewBag.CompetencyList = ClWorkflow.GetDefault().Competencies;
+			account.Principal = Db.Accounts.FirstOrDefault(a => a.Department == account.Department && a.Role == Role.FunctionalManager);
 			return View(account);
 		}
 
@@ -298,7 +290,7 @@
 		[Authorize(Roles = "Admin")]
 		public ActionResult Create()
 		{
-			ViewBag.Accounts = new SelectList(db.Accounts.OrderBy(a => a.FullName), "Id", "FullName");
+			ViewBag.Accounts = new SelectList(Db.Accounts.OrderBy(a => a.FullName), "Id", "FullName");
 			return View();
 		}
 
@@ -312,9 +304,9 @@
 			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId,AdministrativeManagerId")] Account
 				account)
 		{
-			Account dbAccount = db.Accounts.FirstOrDefault(a => a.Login == account.Login);
-			Account currentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-			ViewBag.Accounts = new SelectList(db.Accounts.OrderBy(a => a.FullName), "Id", "FullName", Request.Form["ManagerId"]);
+			Account dbAccount = Db.Accounts.FirstOrDefault(a => a.Login == account.Login);
+			Account currentAccount = GetCurrentAccount();
+			ViewBag.Accounts = new SelectList(Db.Accounts.OrderBy(a => a.FullName), "Id", "FullName", Request.Form["ManagerId"]);
 
 			if (dbAccount != null)
 			{
@@ -325,8 +317,8 @@
 			if (ModelState.IsValid)
 			{
 				account.SetPassword("123456Qq");
-				db.Accounts.Add(account);
-				db.SaveChanges();
+				Db.Accounts.Add(account);
+				Db.SaveChanges();
 				return RedirectToAction("Index");
 			}
 
@@ -349,14 +341,14 @@
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			Account account = db.Accounts.Find(id);
+			Account account = Db.Accounts.Find(id);
 			if (account == null)
 			{
 				return HttpNotFound();
 			}
-			Account currentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
+			Account currentAccount = GetCurrentAccount();
 
-			ViewBag.Accounts = new SelectList(db.Accounts.OrderBy(a => a.FullName), "Id", "FullName", account.ManagerId);
+			ViewBag.Accounts = new SelectList(Db.Accounts.OrderBy(a => a.FullName), "Id", "FullName", account.ManagerId);
 
 			// Можно редактировать админу, и нач. своего отдела.
 			if (currentAccount.Role == Role.Admin ||
@@ -380,15 +372,15 @@
 		{
 			if (ModelState.IsValid)
 			{
-				db.Entry(account).State = EntityState.Modified;
-				db.Entry(account).Property(uco => uco.Password).IsModified = false;
-				db.Entry(account).Property(uco => uco.Salt).IsModified = false;
-				db.Entry(account).Property(uco => uco.Guid).IsModified = false;
-				db.Entry(account).Property(uco => uco.LastEvaluationPercent).IsModified = false;
-				db.SaveChanges();
+				Db.Entry(account).State = EntityState.Modified;
+				Db.Entry(account).Property(uco => uco.Password).IsModified = false;
+				Db.Entry(account).Property(uco => uco.Salt).IsModified = false;
+				Db.Entry(account).Property(uco => uco.Guid).IsModified = false;
+				Db.Entry(account).Property(uco => uco.LastEvaluationPercent).IsModified = false;
+				Db.SaveChanges();
 				return RedirectToAction("Index");
 			}
-			ViewBag.Accounts = new SelectList(db.Accounts.OrderBy(a => a.FullName), "Id", "FullName", account.ManagerId);
+			ViewBag.Accounts = new SelectList(Db.Accounts.OrderBy(a => a.FullName), "Id", "FullName", account.ManagerId);
 			return View(account);
 		}
 
@@ -396,7 +388,7 @@
 		{
 			if (disposing)
 			{
-				db.Dispose();
+				Db.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -473,7 +465,7 @@
 					var creation = false;
 
 					// Ищем по логину
-					account = db.Accounts.FirstOrDefault(a => a.Login == login);
+					account = Db.Accounts.FirstOrDefault(a => a.Login == login);
 
 					// Если не нашли - создаем
 					if (account == null)
@@ -517,7 +509,7 @@
 					}
 					if (values.Length > 7)
 					{
-						account.Manager = db.Accounts.FirstOrDefault(a => a.FullName == values[7]);
+						account.Manager = Db.Accounts.FirstOrDefault(a => a.FullName == values[7]);
 						if (account.Manager != null)
 						{
 							account.Manager.Role = Role.AdministrativeManager;
@@ -539,23 +531,26 @@
 					if (creation)
 					{
 						account.SetPassword("123456Qq");
-						db.Accounts.Add(account);
+						Db.Accounts.Add(account);
 					}
 				}
 
-				db.SaveChanges();
+				Db.SaveChanges();
 			}
 
 			/*
              // После импорта обновляем админ. руководителя
-             foreach (var account in db.Accounts)
+             foreach (var account in Db.Accounts)
              {
-                 account.Manager = db.Accounts.FirstOrDefault(a => a.FullName == account.ManagerFullName);
+                 account.Manager = Db.Accounts.FirstOrDefault(a => a.FullName == account.ManagerFullName);
                  if (account.Manager != null) account.Manager.Role = Role.FunctionalManager;
              }*/
 
-			db.SaveChanges();
+			Db.SaveChanges();
 			return RedirectToAction("Index");
 		}
+
+
+		
 	}
 }

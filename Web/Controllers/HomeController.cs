@@ -1,41 +1,24 @@
-﻿namespace Web.Controllers
+﻿namespace Odintsov.Accounts.Web.Controllers
 {
 	using System;
 	using System.IO;
-	using System.Linq;
 	using System.Web.Mvc;
 	using System.Xml.Serialization;
-	using Common.Enums;
-	using Entities;
 	using XmlEntities;
 
 	[Authorize]
-	public class HomeController : Controller
+	public class HomeController : BaseController
 	{
-		private readonly AccountsDbContext db = new AccountsDbContext();
-
 		// GET: Home
 		public ActionResult Index()
 		{
-			object error;
-			TempData.TryGetValue("Error", out error);
-			if (error != null)
-			{
-				ViewBag.Error = error.ToString();
-			}
-			ViewBag.CompetencyList = new CompetencyList(Server.MapPath("~/App_Data/CompetencyList.xml")).Competencies;
-			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-
-			ViewBag.Principal =
-				db.Accounts.FirstOrDefault(a => a.Department == currentAccount.Department && a.Role == Role.FunctionalManager);
-
-			return View(db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name));
+			return RedirectToAction("Details", "Accounts");
 		}
 
 		[Authorize(Roles = "Admin")]
 		public ActionResult CompetencyList()
 		{
-			ViewBag.CompetencyList = System.IO.File.ReadAllText(Server.MapPath("~/App_Data/CompetencyList.xml"));
+			ViewBag.CompetencyList =  ClWorkflow.GetDefaultAsText();
 			return View();
 		}
 
@@ -47,7 +30,7 @@
 
 			try
 			{
-				new XmlSerializer(typeof (CompetencyList)).Deserialize(new StringReader(text));
+				ClWorkflow.SetDefaultAsText(text);
 			}
 			catch (Exception e)
 			{
@@ -55,8 +38,7 @@
 				ViewBag.CompetencyList = text;
 				return View();
 			}
-
-			System.IO.File.WriteAllText(Server.MapPath("~/App_Data/CompetencyList.xml"), text);
+			
 			return RedirectToAction("Index", "Home");
 		}
 	}

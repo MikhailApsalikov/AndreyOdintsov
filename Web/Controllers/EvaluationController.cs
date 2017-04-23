@@ -5,22 +5,18 @@
 	using System.Linq;
 	using System.Web.Mvc;
 	using BusinessLogic;
-	using Common.Enums;
 	using Entities;
-	using XmlEntities;
 
 	[Authorize]
-	public class EvaluationController : Controller
+	public class EvaluationController : BaseController
 	{
-		private readonly AccountsDbContext db = new AccountsDbContext();
-
 		// GET: Evaluation/Details/5
 
 		public ActionResult Details(int id)
 		{
-			PrepareComtetencyList();
-			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-			Evaluation evaluation = ViewBag.Evaluation = db.Evaluations.Find(id);
+			PrepareCompetencyList();
+			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
+			Evaluation evaluation = ViewBag.Evaluation = Db.Evaluations.Find(id);
 
 			return View();
 		}
@@ -28,7 +24,7 @@
 		// GET: Evaluation/Pass
 		public ActionResult Pass()
 		{
-			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
+			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
 			Evaluation lastEvaluation = currentAccount.Evaluations.OrderByDescending(e => e.Passed).FirstOrDefault();
 
 			// Нельзя проходить чаще чем раз в день (на всякий случай).
@@ -38,7 +34,7 @@
 				return RedirectToAction("Index", "Home");
 			}
 
-			PrepareComtetencyList();
+			PrepareCompetencyList();
 			PrepareIndicatorsForm();
 
 			return View();
@@ -48,10 +44,10 @@
 		[ValidateAntiForgeryToken]
 		public ActionResult PassPost()
 		{
-			PrepareComtetencyList();
+			PrepareCompetencyList();
 			PrepareIndicatorsForm();
 			ValidateIndicatorsForm();
-			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
+			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
 
 			if (ViewBag.IndicatorErrors.Count > 0)
 			{
@@ -75,18 +71,18 @@
 
 			evaluation.IndicatorsCount = evaluation.EvaluationValues.Count;
 			currentAccount.Evaluations.Add(evaluation);
-			db.SaveChanges();
+			Db.SaveChanges();
 
 			return RedirectToAction("Index", "Home");
 		}
-		
+
 		[Authorize(Roles = "FunctionalManager, AdministrativeManager")]
 		public ActionResult Review(int id)
 		{
-			PrepareComtetencyList();
+			PrepareCompetencyList();
 			PrepareIndicatorsForm();
-			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-			Evaluation evaluation = ViewBag.Evaluation = db.Evaluations.Find(id);
+			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
+			Evaluation evaluation = ViewBag.Evaluation = Db.Evaluations.Find(id);
 			Account examinee = ViewBag.Examinee = evaluation.Examinee;
 
 			if (!EvaluationWorkflow.CanBeReviewedBy(currentAccount, examinee))
@@ -102,10 +98,10 @@
 		[ValidateAntiForgeryToken]
 		public ActionResult ReviewPost(int id)
 		{
-			PrepareComtetencyList();
+			PrepareCompetencyList();
 			PrepareIndicatorsForm();
-			Account currentAccount = ViewBag.CurrentAccount = db.Accounts.FirstOrDefault(a => a.Login == User.Identity.Name);
-			Evaluation evaluation = ViewBag.Evaluation = db.Evaluations.Find(id);
+			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
+			Evaluation evaluation = ViewBag.Evaluation = Db.Evaluations.Find(id);
 			Account examinee = ViewBag.Examinee = evaluation.Examinee;
 
 			if (!EvaluationWorkflow.CanBeReviewedBy(currentAccount, examinee))
@@ -128,7 +124,7 @@
 				{
 					EvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
 						ev => ev.Competency == int.Parse(kv.Key.Split('_')[1]) &&
-							  ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
+						      ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
 					evaluationValue.ReviewValue = double.Parse(kv.Value.Replace(".", ","));
 				}
 				evaluation.Examinier = currentAccount;
@@ -143,17 +139,17 @@
 				{
 					EvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
 						ev => ev.Competency == int.Parse(kv.Key.Split('_')[1]) &&
-							  ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
+						      ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
 					evaluationValue.ManagerValue = double.Parse(kv.Value.Replace(".", ","));
 				}
 				evaluation.Manager = currentAccount;
 				evaluation.ManagerResult = evaluation.EvaluationValues.Sum(ev => ev.ManagerValue ?? 0);
 			}
 
-			
+
 			evaluation.Examinee.LastEvaluationPercent = evaluation.GetPercent();
 
-			db.SaveChanges();
+			Db.SaveChanges();
 			return RedirectToAction("Details", "Accounts", new {id = examinee.Id});
 		}
 
@@ -170,17 +166,6 @@
 					ViewBag.IndicatorErrors.Add(indicatorKey);
 				}
 			}
-		}
-
-		private void PrepareIndicatorsForm()
-		{
-			ViewBag.IndicatorErrors = new List<string>();
-			ViewBag.IndicatorValues  = new Dictionary<string, string>();
-		}
-
-		private void PrepareComtetencyList()
-		{
-			ViewBag.CompetencyList = new CompetencyList(Server.MapPath("~/App_Data/CompetencyList.xml"));
 		}
 	}
 }
