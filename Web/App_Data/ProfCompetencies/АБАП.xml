@@ -31,4 +31,20 @@
 			</MoreThanExpectations>
 		</Indicator>
 	</Сompetency>
+<Сompetency Id='6' Title='Готовность к изменениям' Enabled='true' xml:space='preserve'>
+		<Indicator Id='7' Title='Семки есть?' Enabled='true' xml:space='preserve'>
+			<LessThanExpectations xml:space='preserve'>Нету</LessThanExpectations>
+			<EqualsToExpectations xml:space='preserve'>Не дам
+			</EqualsToExpectations>
+			<MoreThanExpectations xml:space='preserve'>Бери хуле
+			</MoreThanExpectations>
+		</Indicator>
+		<Indicator Id='8' Title='Мабила есть?' Enabled='true' xml:space='preserve'>
+			<LessThanExpectations xml:space='preserve'>Нету</LessThanExpectations>
+			<EqualsToExpectations xml:space='preserve'>Не дам
+			</EqualsToExpectations>
+			<MoreThanExpectations xml:space='preserve'>Бери хуле
+			</MoreThanExpectations>
+		</Indicator>
+	</Сompetency>
 </CompetencyList>

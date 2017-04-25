@@ -14,11 +14,20 @@
 
 		[Display(Name = "Отдел(ФН)")] public string Department;
 
-		[Display(Name = "Оценки")] public ICollection<Evaluation> Evaluations;
+		[Display(Name = "Оценки личн. компетенций")] public ICollection<Evaluation> Evaluations;
 
-		[Display(Name = "Ревью как админ. рук.")] public ICollection<Evaluation> EvaluationsManages;
+		[Display(Name = "Ревью личн. компетенций как админ. рук.")] public ICollection<Evaluation> EvaluationsManages;
 
-		[Display(Name = "Ревью как фукнц. рук.")] public ICollection<Evaluation> EvaluationsReviews;
+		[Display(Name = "Ревью личн. компетенций как фукнц. рук.")] public ICollection<Evaluation> EvaluationsReviews;
+
+		[Display(Name = "Оценки проф. компетенций")]
+		public ICollection<ProfEvaluation> ProfEvaluations;
+
+		[Display(Name = "Ревью проф. компетенций как админ. рук.")]
+		public ICollection<ProfEvaluation> ProfEvaluationsManages;
+
+		[Display(Name = "Ревью проф. компетенций как фукнц. рук.")]
+		public ICollection<ProfEvaluation> ProfEvaluationsReviews;
 
 		[Display(Name = "ФИО")] public string FullName;
 

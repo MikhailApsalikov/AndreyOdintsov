@@ -296,6 +296,7 @@
 				SetError("Внимание! Вы не можете проходить оценку компетенций, потому что для вас в системе не указано ни функционального, ни административного руководителя!");
 			}
 			ViewBag.CompetencyList = ClWorkflow.GetCompetencyList().Competencies;
+			ViewBag.ProfCompetencyList = CompetencyListWorkflow.IsProfCompetencyExist(account.FunctionalArea) ? ClWorkflow.GetProfCompetencyList(account.FunctionalArea).Competencies : null;
 			return View(account);
 		}
 

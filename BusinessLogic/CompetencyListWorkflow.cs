@@ -67,6 +67,10 @@
 
 		public static bool IsProfCompetencyExist(string name)
 		{
+			if (string.IsNullOrEmpty(name))
+			{
+				return false;
+			}
 			return GetProfCompetencyLists().Any(s => s.ToUpperInvariant() == name.ToUpperInvariant());
 		}
 
