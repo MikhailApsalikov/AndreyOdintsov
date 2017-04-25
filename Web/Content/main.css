@@ -55,3 +55,8 @@ dt, label {
 	#filter .form-group > select {
 		max-width: 150px;
 	}
+
+
+.nowrap {
+	white-space: initial !important;
+}
