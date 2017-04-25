@@ -16,10 +16,13 @@
 	{
 		public Account()
 		{
+			Team = new HashSet<Account>();
 			Evaluations = new HashSet<Evaluation>();
 			EvaluationsReviews = new HashSet<Evaluation>();
-			Team = new HashSet<Account>();
 			EvaluationsManages = new HashSet<Evaluation>();
+			ProfEvaluations = new HashSet<ProfEvaluation>();
+			ProfEvaluationsReviews = new HashSet<ProfEvaluation>();
+			ProfEvaluationsManages = new HashSet<ProfEvaluation>();
 		}
 
 		public int Id { get; set; }
@@ -48,12 +51,17 @@
 		public int? AdministrativeManagerId { get; set; }
 		public virtual Account AdministrativeManager { get; set; }
 		public double? LastEvaluationPercent { get; set; }
+		public double? LastProfEvaluationPercent { get; set; }
 
 		public virtual ICollection<Evaluation> Evaluations { get; set; }
 		public virtual ICollection<Evaluation> EvaluationsReviews { get; set; }
+		public virtual ICollection<Evaluation> EvaluationsManages { get; set; }
 		public virtual ICollection<Account> Team { get; set; }
 
-		public virtual ICollection<Evaluation> EvaluationsManages { get; set; }
+		public virtual ICollection<ProfEvaluation> ProfEvaluations { get; set; }
+		public virtual ICollection<ProfEvaluation> ProfEvaluationsReviews { get; set; }
+
+		public virtual ICollection<ProfEvaluation> ProfEvaluationsManages { get; set; }
 
 		[Display(Name = "Роль")]
 		[NotMapped]
@@ -87,6 +95,14 @@
 		public Evaluation GetLastReviewedEvaluation()
 		{
 			Evaluation evaluation = Evaluations.Where(e => e.Examinier != null || e.Manager != null)
+				.OrderByDescending(e => e.Reviewed).FirstOrDefault();
+
+			return evaluation;
+		}
+
+		public ProfEvaluation GetProfLastReviewedEvaluation()
+		{
+			ProfEvaluation evaluation = ProfEvaluations.Where(e => e.Examinier != null || e.Manager != null)
 				.OrderByDescending(e => e.Reviewed).FirstOrDefault();
 
 			return evaluation;

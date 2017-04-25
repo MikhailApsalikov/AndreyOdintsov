@@ -1,0 +1,101 @@
+﻿@model ProfEvaluation
+
+@{
+    ViewBag.Title = "Просмотр оценки";
+    var currentAccount = ViewBag.CurrentAccount as Account;
+    var competencyList = ViewBag.CompetencyList as CompetencyList;
+    var evaluation = ViewBag.Evaluation as ProfEvaluation;
+}
+
+<h2>Оценка компетенций сотрудника.</h2>
+<dl class="dl-horizontal">
+    <dt>Сотрудник</dt>
+	<dd>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new {Id = evaluation.Examinee.Id}, null), @evaluation.Examinee.Position
+	@if (evaluation.Examinee?.Position != evaluation.Position)
+	{
+		<span>(Тест пройден в должности "@evaluation.Position")</span>
+	}
+		
+	</dd>
+
+	<dt>Регион, Отдел</dt>
+	<dd>@evaluation.Examinee.Region (@evaluation.Examinee.MicroRegion), @evaluation.Examinee.Department</dd>
+
+    @if (evaluation.Examinier != null)
+    {
+        <dt>Функц. руководителя</dt>
+        <dd>@Html.ActionLink(evaluation.Examinier.FullName, "Details", "Accounts", new { Id = evaluation.Examinier.Id }), @evaluation.Examinier.Position</dd>
+    }
+
+    @if (evaluation.Manager != null)
+	{
+        <dt>Админ. руководитель</dt>
+        <dd>@Html.ActionLink(evaluation.Manager.FullName, "Details", "Accounts", new { Id = evaluation.Manager.Id }), @evaluation.Manager.Position</dd>
+    }
+</dl>
+
+<div class="form-horizontal">
+    @foreach (var competency in competencyList.Competencies)
+    {
+        if (!evaluation.EvaluationValues.Any(ev => ev.Competency == competency.Id)) { continue; }
+        <h4>Компетенция: @competency.Title</h4>
+        <table class="table">
+            <tr class="info">
+                <th>Индикатор</th>
+                <th>Не соответствует ожиданиям (1 балл)</th>
+                <th>Соответствует ожиданиям (2 балла)</th>
+                <th>Превосходит ожидания (3 балла)</th>
+                <th>Оценка сотрудника</th>
+                @if (evaluation.Examinier != null)
+                {
+                    <th>Оценка функц. руководителя</th>
+                }
+				@if (evaluation.Manager != null)
+				{
+					<th>Оценка админ. руководителя</th>
+				}
+            </tr>
+            @foreach (var indicator in competency.Indicators)
+            {
+                var item = evaluation.EvaluationValues.FirstOrDefault(ev => ev.Indicator == indicator.Id);
+                if (item == null) { continue; }
+                <tr>
+                    <td>@indicator.Title</td>
+                    <td>@indicator.LessThanExpectations</td>
+                    <td>@indicator.EqualsToExpectations</td>
+                    <td>@indicator.MoreThanExpectations</td>
+                    <td>@item.Value</td>
+					@if (evaluation.Examinier != null)
+					{
+						<td>@item.ReviewValue</td>
+					}
+					@if (evaluation.Manager != null)
+					{
+						<td>@item.ManagerValue</td>
+					}
+                </tr>
+            }
+            <tr>
+                <td colspan="4">
+                    <strong class="pull-right">Итого (макс. @(evaluation.EvaluationValues.Where(ev => ev.Competency == competency.Id).ToList().Count * 3)):</strong>
+                </td>
+                <td>
+                    <label>@evaluation.EvaluationValues.Sum(ev => (ev.Competency == competency.Id) ? ev.Value : 0)</label>
+                </td>
+				@if (evaluation.Examinier != null)
+				{
+					<td>
+						<label>@evaluation.EvaluationValues.Sum(ev => (ev.Competency == competency.Id) ? ev.ReviewValue : 0)</label>
+					</td>
+				}
+				@if (evaluation.Manager != null)
+				{
+					<td>
+						<label>@evaluation.EvaluationValues.Sum(ev => (ev.Competency == competency.Id) ? ev.ManagerValue : 0)</label>
+					</td>
+				}
+            </tr>
+        </table>
+    }
+
+</div>

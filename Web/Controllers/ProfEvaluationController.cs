@@ -1,29 +1,26 @@
 ﻿namespace Odintsov.Accounts.Web.Controllers
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Linq;
 	using System.Web.Mvc;
 	using BusinessLogic;
 	using Entities;
 
 	[Authorize]
-	public class EvaluationController : BaseController
+	public class ProfEvaluationController : BaseController
 	{
-
 		public ActionResult Details(int id)
 		{
-			PrepareCompetencyList();
 			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
-			Evaluation evaluation = ViewBag.Evaluation = Db.Evaluations.Find(id);
-
+			ProfEvaluation evaluation = ViewBag.Evaluation = Db.ProfEvaluations.Find(id);
+			PrepareCompetencyList(evaluation.Examinee.FunctionalArea);
 			return View();
 		}
-		
+
 		public ActionResult Pass()
 		{
 			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
-			Evaluation lastEvaluation = currentAccount.Evaluations.OrderByDescending(e => e.Passed).FirstOrDefault();
+			ProfEvaluation lastEvaluation = currentAccount.ProfEvaluations.OrderByDescending(e => e.Passed).FirstOrDefault();
 
 			// Нельзя проходить чаще чем раз в день (на всякий случай).
 			if (lastEvaluation != null && lastEvaluation.Passed.Date == DateTime.Today)
@@ -32,7 +29,7 @@
 				return RedirectToAction("Index", "Home");
 			}
 
-			PrepareCompetencyList();
+			PrepareCompetencyList(currentAccount.FunctionalArea);
 			PrepareIndicatorsForm();
 
 			return View();
@@ -42,34 +39,38 @@
 		[ValidateAntiForgeryToken]
 		public ActionResult PassPost()
 		{
-			PrepareCompetencyList();
+			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
+			PrepareCompetencyList(currentAccount.FunctionalArea);
 			PrepareIndicatorsForm();
 			ValidateIndicatorsForm();
-			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
 
 			if (ViewBag.IndicatorErrors.Count > 0)
 			{
 				return View();
 			}
 
-			var evaluation = new Evaluation();
-			evaluation.Examinee = currentAccount;
-			evaluation.Passed = DateTime.Now;
-			evaluation.Position = currentAccount.Position;
+			var evaluation = new ProfEvaluation
+			{
+				Examinee = currentAccount,
+				Passed = DateTime.Now,
+				Position = currentAccount.Position
+			};
 
 			foreach (dynamic kv in ViewBag.IndicatorValues)
 			{
-				var evaluationValue = new EvaluationValue();
-				evaluationValue.Evaluation = evaluation;
-				evaluationValue.Competency = int.Parse(kv.Key.Split('_')[1]);
-				evaluationValue.Indicator = int.Parse(kv.Key.Split('_')[2]);
-				evaluationValue.Value = double.Parse(kv.Value.Replace(".", ","));
+				var evaluationValue = new ProfEvaluationValue
+				{
+					Evaluation = evaluation,
+					Competency = int.Parse(kv.Key.Split('_')[1]),
+					Indicator = int.Parse(kv.Key.Split('_')[2]),
+					Value = double.Parse(kv.Value.Replace(".", ","))
+				};
 
 				evaluation.EvaluationValues.Add(evaluationValue);
 			}
 
 			evaluation.IndicatorsCount = evaluation.EvaluationValues.Count;
-			currentAccount.Evaluations.Add(evaluation);
+			currentAccount.ProfEvaluations.Add(evaluation);
 			Db.SaveChanges();
 
 			return RedirectToAction("Index", "Home");
@@ -78,11 +79,11 @@
 		[Authorize(Roles = "FunctionalManager, AdministrativeManager")]
 		public ActionResult Review(int id)
 		{
-			PrepareCompetencyList();
-			PrepareIndicatorsForm();
 			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
-			Evaluation evaluation = ViewBag.Evaluation = Db.Evaluations.Find(id);
+			ProfEvaluation evaluation = ViewBag.Evaluation = Db.ProfEvaluations.Find(id);
 			Account examinee = ViewBag.Examinee = evaluation.Examinee;
+			PrepareCompetencyList(examinee.FunctionalArea);
+			PrepareIndicatorsForm();
 
 			if (!EvaluationWorkflow.CanBeReviewedBy(currentAccount, examinee))
 			{
@@ -97,11 +98,11 @@
 		[ValidateAntiForgeryToken]
 		public ActionResult ReviewPost(int id)
 		{
-			PrepareCompetencyList();
-			PrepareIndicatorsForm();
 			Account currentAccount = ViewBag.CurrentAccount = GetCurrentAccount();
-			Evaluation evaluation = ViewBag.Evaluation = Db.Evaluations.Find(id);
+			ProfEvaluation evaluation = ViewBag.Evaluation = Db.ProfEvaluations.Find(id);
 			Account examinee = ViewBag.Examinee = evaluation.Examinee;
+			PrepareCompetencyList(examinee.FunctionalArea);
+			PrepareIndicatorsForm();
 
 			if (!EvaluationWorkflow.CanBeReviewedBy(currentAccount, examinee))
 			{
@@ -118,12 +119,12 @@
 			if (EvaluationWorkflow.CanBeReviewedAsFunctionalManager(currentAccount, examinee))
 			{
 				evaluation.Reviewed = DateTime.Now;
-				currentAccount.EvaluationsReviews.Add(evaluation);
+				currentAccount.ProfEvaluationsReviews.Add(evaluation);
 				foreach (dynamic kv in ViewBag.IndicatorValues)
 				{
-					EvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
+					ProfEvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
 						ev => ev.Competency == int.Parse(kv.Key.Split('_')[1]) &&
-						      ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
+							  ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
 					evaluationValue.ReviewValue = double.Parse(kv.Value.Replace(".", ","));
 				}
 				evaluation.Examinier = currentAccount;
@@ -133,12 +134,12 @@
 			if (EvaluationWorkflow.CanBeReviewedAsAdministrativeManager(currentAccount, examinee))
 			{
 				evaluation.ManagerReviewed = DateTime.Now;
-				currentAccount.EvaluationsManages.Add(evaluation);
+				currentAccount.ProfEvaluationsManages.Add(evaluation);
 				foreach (dynamic kv in ViewBag.IndicatorValues)
 				{
-					EvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
+					ProfEvaluationValue evaluationValue = evaluation.EvaluationValues.FirstOrDefault(
 						ev => ev.Competency == int.Parse(kv.Key.Split('_')[1]) &&
-						      ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
+							  ev.Indicator == int.Parse(kv.Key.Split('_')[2]));
 					evaluationValue.ManagerValue = double.Parse(kv.Value.Replace(".", ","));
 				}
 				evaluation.Manager = currentAccount;
@@ -146,10 +147,10 @@
 			}
 
 
-			evaluation.Examinee.LastEvaluationPercent = evaluation.GetPercent();
+			evaluation.Examinee.LastProfEvaluationPercent = evaluation.GetPercent();
 
 			Db.SaveChanges();
-			return RedirectToAction("Details", "Accounts", new {id = examinee.Id});
+			return RedirectToAction("Details", "Accounts", new { id = examinee.Id });
 		}
 	}
 }

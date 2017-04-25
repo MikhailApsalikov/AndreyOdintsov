@@ -32,7 +32,7 @@
 				@if (EvaluationWorkflow.CanPassProf(User?.Identity?.Name))
 				{
 					<li>
-						@Html.ActionLink("Оценка профессиональных компетенций", controllerName: "Evaluation", actionName: "Pass")
+						@Html.ActionLink("Оценка профессиональных компетенций", controllerName: "ProfEvaluation", actionName: "Pass")
 					</li>
 				}
 				@if (User.IsInRole("Admin"))

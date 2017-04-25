@@ -72,7 +72,9 @@
     <Compile Include="Account.cs" />
     <Compile Include="AccountMetadata.cs" />
     <Compile Include="AccountsDbContext.cs" />
+    <Compile Include="ProfEvaluation.cs" />
     <Compile Include="Evaluation.cs" />
+    <Compile Include="ProfEvaluationValue.cs" />
     <Compile Include="EvaluationValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestDataInitializer.cs" />

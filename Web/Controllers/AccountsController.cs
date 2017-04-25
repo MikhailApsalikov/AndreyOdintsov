@@ -157,6 +157,9 @@
 			ViewBag.LastEvaluationPercentSortParm = sortOrder != "+LastEvaluationPercent"
 				? "+LastEvaluationPercent"
 				: "-LastEvaluationPercent";
+			ViewBag.LastProfEvaluationPercentSortParm = sortOrder != "+LastProfEvaluationPercent"
+				? "+LastProfEvaluationPercent"
+				: "-LastProfEvaluationPercent";
 			ViewBag.CurrentSort = sortOrder;
 
 			PropertyInfo propInfo = typeof (Account).GetProperty(sortOrder.Substring(1));
@@ -223,6 +226,11 @@
 						? accounts.OrderBy(s => s.LastEvaluationPercent == null).ThenBy(s => s.LastEvaluationPercent)
 						: accounts.OrderByDescending(s => s.LastEvaluationPercent);
 					break;
+				case "LastProfEvaluationPercent":
+					accounts = @ascending
+						? accounts.OrderBy(s => s.LastProfEvaluationPercent == null).ThenBy(s => s.LastProfEvaluationPercent)
+						: accounts.OrderByDescending(s => s.LastProfEvaluationPercent);
+					break;
 			}
 
 
@@ -270,6 +278,7 @@
 
 			// =======================     График      =============================
 			ViewBag.Percents = accounts.Select(a => a.LastEvaluationPercent).Where(p => p.HasValue).ToList();
+			ViewBag.ProfPercents = accounts.Select(a => a.LastProfEvaluationPercent).Where(p => p.HasValue).ToList();
 
 			return View(accounts.ToPagedList(page, pageSize));
 		}
@@ -381,6 +390,7 @@
 				Db.Entry(account).Property(uco => uco.Salt).IsModified = false;
 				Db.Entry(account).Property(uco => uco.Guid).IsModified = false;
 				Db.Entry(account).Property(uco => uco.LastEvaluationPercent).IsModified = false;
+				Db.Entry(account).Property(uco => uco.LastProfEvaluationPercent).IsModified = false;
 				Db.SaveChanges();
 				return RedirectToAction("Index");
 			}

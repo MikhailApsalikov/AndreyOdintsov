@@ -227,6 +227,9 @@
     <Content Include="Views\Home\CompetencyList.cshtml" />
     <Content Include="Views\Home\ProfCompetencyLists.cshtml" />
     <Content Include="Views\Home\ProfCompetencyList.cshtml" />
+    <Content Include="Views\ProfEvaluation\Details.cshtml" />
+    <Content Include="Views\ProfEvaluation\Pass.cshtml" />
+    <Content Include="Views\ProfEvaluation\Review.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -241,6 +244,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\EvaluationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProfEvaluationController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

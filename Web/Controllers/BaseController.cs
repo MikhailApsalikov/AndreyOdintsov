@@ -36,9 +36,31 @@
 		}
 
 		[NonAction]
+		protected void PrepareCompetencyList(string name)
+		{
+			ViewBag.CompetencyList = ClWorkflow.GetProfCompetencyList(name);
+		}
+
+		[NonAction]
 		protected void SetError(string text)
 		{
 			TempData["Error"] = text;
+		}
+
+		[NonAction]
+		protected void ValidateIndicatorsForm()
+		{
+			foreach (string indicatorKey in Request.Form.AllKeys.Where(i => i.StartsWith("indicator_")))
+			{
+				double val;
+				bool parsed = double.TryParse(Request.Form[indicatorKey].Replace(".", ","), out val);
+				ViewBag.IndicatorValues.Add(indicatorKey, Request.Form[indicatorKey]);
+
+				if (!parsed || val < 1 || val > 3)
+				{
+					ViewBag.IndicatorErrors.Add(indicatorKey);
+				}
+			}
 		}
 	}
 }
