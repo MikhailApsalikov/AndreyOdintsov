@@ -426,13 +426,26 @@
 			}
 
 			Encoding windows1251 = Encoding.GetEncoding(1251), utf8 = Encoding.UTF8;
+			List<Tuple<Account, string, string>> accounts = new List<Tuple<Account, string, string>>();
 
 			using (var csvReader = new StreamReader(rawFile.InputStream, windows1251, true))
 			{
-				var inputLine = "";
-				// 0    ;1 ;2     ;3  ;4  ;5        ;6 ;7   ;8         
-				// № п/п;МР;Город;ФИО;Пол;Должность;ФН;Функц.руководитель;Логин
-				string[] headers = csvReader.ReadLine().Split(';');
+				string inputLine;
+				/* 
+				 * 0 - № п/п;
+				 * 1 - МР
+				 * 2 - Город
+				 * 3 - ФИО
+				 * 4 - Пол
+				 * 5 - Должность/категория
+				 * 6 - Отдел
+				 * 7 - Административный руководитель
+				 * 8 - Функциональный руководитель;
+				 * 9 - Учетаная запись;
+				 * 10 - Функциональное направление
+				*/
+
+				csvReader.ReadLine().Split(';');
 
 				while ((inputLine = csvReader.ReadLine()) != null)
 				{
@@ -453,17 +466,17 @@
 					}
 
 					// Без логина не импортируем
-					if (values.Length < 9)
+					if (values.Length < 10)
 					{
 						continue;
 					}
 
 					// Корявые и пустые логины тоже не нужны
-					if (!Regex.IsMatch(values[8], @"^[a-zA-Z0-9]+$"))
+					if (!Regex.IsMatch(values[9], @"^[a-zA-Z0-9]+$"))
 					{
 						continue;
 					}
-					string login = values[8];
+					string login = values[9];
 
 					Account account = null;
 					var creation = false;
@@ -511,17 +524,17 @@
 					{
 						account.Department = values[6];
 					}
-					if (values.Length > 7)
-					{
-						account.Manager = Db.Accounts.FirstOrDefault(a => a.FullName == values[7]);
-						if (account.Manager != null)
-						{
-							account.Manager.Role = Role.AdministrativeManager;
-						}
-					}
 					if (values.Length > 8)
 					{
-						account.Login = values[8];
+						accounts.Add(new Tuple<Account, string, string>(account, values[7], values[8]));
+					}
+					if (values.Length > 9)
+					{
+						account.Login = values[9];
+					}
+					if (values.Length > 10)
+					{
+						account.FunctionalArea = values[10];
 					}
 
 					// TODO: Заполнение ролей общего начальника, главного по ФН
@@ -537,18 +550,33 @@
 						account.SetPassword("123456Qq");
 						Db.Accounts.Add(account);
 					}
+					
 				}
 
 				Db.SaveChanges();
 			}
 
-			/*
-             // После импорта обновляем админ. руководителя
-             foreach (var account in Db.Accounts)
-             {
-                 account.Manager = Db.Accounts.FirstOrDefault(a => a.FullName == account.ManagerFullName);
-                 if (account.Manager != null) account.Manager.Role = Role.FunctionalManager;
-             }*/
+			// После импорта обновляем руководителей
+			foreach (var acc in accounts)
+			{
+				if (!string.IsNullOrEmpty(acc.Item2))
+				{
+					acc.Item1.AdministrativeManager = Db.Accounts.FirstOrDefault(a => a.FullName == acc.Item2);
+					if (acc.Item1.AdministrativeManager != null)
+					{
+						acc.Item1.AdministrativeManager.Role = Role.AdministrativeManager;
+					}
+				}
+
+				if (!string.IsNullOrEmpty(acc.Item3))
+				{
+					acc.Item1.Manager = Db.Accounts.FirstOrDefault(a => a.FullName == acc.Item3);
+					if (acc.Item1.Manager != null)
+					{
+						acc.Item1.Manager.Role = Role.AdministrativeManager;
+					}
+				}
+			}
 
 			Db.SaveChanges();
 			return RedirectToAction("Index");
