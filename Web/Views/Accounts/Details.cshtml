@@ -515,7 +515,7 @@
 						],
 						borderWidth: 1,
 						data: [
-							@string.Join(", ", evaluationsForDevChart.Select(s=>s.GetPercent().ToString()))
+							@string.Join(", ", evaluationsForDevChart.Select(s=>s.GetPercent().Value.ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-GB"))))
 						],
 					}
 				]
@@ -678,7 +678,7 @@
 						],
 						borderWidth: 1,
 						data: [
-							@string.Join(", ", profEvaluationsForDevChart.Select(s=>s.GetPercent().ToString()))
+							@string.Join(", ", profEvaluationsForDevChart.Select(s=>s.GetPercent().Value.ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-GB"))))
 						],
 					}
 				]
