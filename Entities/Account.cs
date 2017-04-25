@@ -34,6 +34,12 @@
 		public string MicroRegion { get; set; }
 		public string Department { get; set; }
 		public string Position { get; set; }
+
+		/// <summary>
+		/// Функциональная область (по ней определяются профессиональные компетенции)
+		/// </summary>
+
+		public string FunctionalArea { get; set; }
 		public Role? Role { get; set; }
 		public string Guid { get; set; }
 		public int? ManagerId { get; set; }
@@ -55,10 +61,6 @@
 
 		[NotMapped]
 		public string RoleDisplayName => RoleMap.Default.GetDisplayName(Role);
-
-		[Display(Name = "Функц. руководитель")]
-		[NotMapped]
-		public Account Principal { get; set; }
 
 		[NotMapped]
 		string IUser<string>.Id => Guid;

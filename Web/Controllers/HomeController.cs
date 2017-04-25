@@ -31,7 +31,7 @@
 			}
 			catch (Exception e)
 			{
-				ViewBag.Error = "Ошибка: " + e.Message;
+				SetError("Ошибка: " + e.Message);
 				ViewBag.CompetencyList = text;
 				return View();
 			}

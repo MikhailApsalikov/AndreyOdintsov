@@ -1,7 +1,6 @@
 ﻿namespace BusinessLogic
 {
 	using System.Linq;
-	using Common.Enums;
 	using Entities;
 
 	public static class EvaluationWorkflow
@@ -13,7 +12,7 @@
 			{
 				return false;
 			}
-			return examinee.Manager != null || examinee.AdministrativeManager != null || examinee.Role == Role.Employee;
+			return examinee.Manager != null || examinee.AdministrativeManager != null;
 		}
 
 		public static bool CanBeReviewedBy(Account manager, Account examinee)
@@ -27,11 +26,7 @@
 			{
 				return false;
 			}
-			if (examinee.Manager != null)
-			{
-				return examinee.Manager == manager;
-			}
-			return examinee.Department == manager.Department && manager.Role == Role.FunctionalManager;
+			return examinee.Manager == manager;
 		}
 
 		public static bool CanBeReviewedAsAdministrativeManager(Account manager, Account examinee)
@@ -41,6 +36,16 @@
 				return false;
 			}
 			return examinee.AdministrativeManager == manager;
+		}
+
+		public static bool CanPassProf(string name)
+		{
+			Account examinee = new AccountsDbContext().Accounts.FirstOrDefault(a => a.Login == name);
+			if (examinee == null)
+			{
+				return false;
+			}
+			return examinee.Manager != null || examinee.AdministrativeManager != null; 
 		}
 	}
 }

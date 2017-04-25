@@ -29,10 +29,19 @@
 						@Html.ActionLink("Оценка компетенций", controllerName: "Evaluation", actionName: "Pass")
 					</li>
 				}
+				@if (EvaluationWorkflow.CanPassProf(User?.Identity?.Name))
+				{
+					<li>
+						@Html.ActionLink("Оценка профессиональных компетенций", controllerName: "Evaluation", actionName: "Pass")
+					</li>
+				}
 				@if (User.IsInRole("Admin"))
 				{
 					<li>
 						@Html.ActionLink("Файл компетенций", controllerName: "Home", actionName: "CompetencyList")
+					</li>
+					<li>
+						@Html.ActionLink("Управление профессиональными компетенциями", controllerName: "Home", actionName: "ProfCompetencyLists")
 					</li>
 				}
 			</ul>

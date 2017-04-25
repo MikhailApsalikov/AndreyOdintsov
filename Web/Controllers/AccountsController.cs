@@ -13,6 +13,7 @@
 	using System.Web.Mvc;
 	using System.Web.Script.Serialization;
 	using System.Web.Security;
+	using BusinessLogic;
 	using Common.Enums;
 	using Common.Filters;
 	using Entities;
@@ -281,8 +282,11 @@
 			{
 				return HttpNotFound();
 			}
+			if (id.HasValue && account.Role != Role.Employee && EvaluationWorkflow.CanPass(account.Login))
+			{
+				SetError("Внимание! Вы не можете проходить оценку компетенций, потому что для вас в системе не указан ни функциональный, ни административный руководитель!");
+			}
 			ViewBag.CompetencyList = ClWorkflow.GetCompetencyList().Competencies;
-			account.Principal = Db.Accounts.FirstOrDefault(a => a.Department == account.Department && a.Role == Role.FunctionalManager);
 			return View(account);
 		}
 
@@ -409,7 +413,7 @@
 
 			if (rawFile == null)
 			{
-				ViewBag.Error = "Не выбран файл";
+				SetError("Не выбран файл");
 				return View();
 			}
 
@@ -417,7 +421,7 @@
 			    rawFile.ContentType != "application/csv" &&
 			    rawFile.ContentType != "text/csv")
 			{
-				ViewBag.Error = "Пожалуйста, выберете файл CSV";
+				SetError("Пожалуйста, выберете файл CSV");
 				return View();
 			}
 
