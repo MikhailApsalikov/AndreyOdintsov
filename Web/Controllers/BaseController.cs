@@ -38,7 +38,7 @@
 		[NonAction]
 		protected void SetError(string text)
 		{
-			ViewBag.Error = text;
+			TempData["Error"] = text;
 		}
 	}
 }

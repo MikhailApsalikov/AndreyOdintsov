@@ -1,155 +1,33 @@
 <CompetencyList xml:space='preserve'>
-	<Сompetency Id='1' Title='Ориентация на результат' Enabled='true' xml:space='preserve'>
-		<Indicator Id='1' Title='Многозадачность' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>				Определяя приоритетность задач/каналов коммуникации допускает критические ошибки.
-				Работа с несколькими задачами одновременно успешна только при  постоянном контроле со стороны руководителя.</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Чаще всего эффективно распределяет приоритетность задач/каналов коммуникации.
-				Одновременная работа по нескольким задачам требует текущего контроля со стороны руководителя.
+	<Сompetency Id='1' Title='АБАП1' Enabled='true' xml:space='preserve'>
+		<Indicator Id='1' Title='Семки есть?' Enabled='true' xml:space='preserve'>
+			<LessThanExpectations xml:space='preserve'>Нету</LessThanExpectations>
+			<EqualsToExpectations xml:space='preserve'>Не дам!
 			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Эффективно распределяет приоритетность задач/каналов коммуникации.
-				Результативно работает по нескольким задачам одновременно без контроля со стороны руководителя.
+			<MoreThanExpectations xml:space='preserve'>Бери хуле
 			</MoreThanExpectations>
 		</Indicator>
-		<Indicator Id='2' Title='Управление временем' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Систематически затягивает выполнение задач средней сложности, в работе допускает большое количество ошибок, в том числе критических.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Работает над задачами средней сложности оперативно, в большинстве случаев завершает их в установленный срок. Не допускает критических ошибок.
+		<Indicator Id='2' Title='Мабила есть?' Enabled='true' xml:space='preserve'>
+			<LessThanExpectations xml:space='preserve'>Нету</LessThanExpectations>
+			<EqualsToExpectations xml:space='preserve'>Не дам
 			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Завершает задачи средней сложности оперативно, в установленный срок или быстрее. Выполняет задачи с минимальным количеством ошибок.
-			</MoreThanExpectations>
-		</Indicator>
-		<Indicator Id='3' Title='Эффективность' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				С трудом решает задачи средней сложности. При выборе способа решения задачи исходит только из собственного удобства.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Уверенно решает задачи средней сложности.В основном использует готовые решения.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Уверенно решает сложные задачи. Находит/создает эффективные решения.
-			</MoreThanExpectations>
-		</Indicator>
-		<Indicator Id='4' Title='Ответственность' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Работает только в рамках высказанной заказчиком потребности. Перекладывает ответственность за результат на коллег или обстоятельства.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Прикладывает усилия, что бы удовлетворить заявленные потребности заказчика. Часто уходит от прямой ответственности за результат/делит его с коллегами.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Выявляет потребности заказчика и прикладывает максимальные усилия чтобы их удовлетворить. Принимает на себя полную ответственность за конечный результат.
-			</MoreThanExpectations>
-		</Indicator>
-	</Сompetency>
-	<Сompetency Id='2' Title='Навык коммуникации' Enabled='true' xml:space='preserve'>
-		<Indicator Id='5' Title='Структурированность мысли' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Излагает мысли путанно, с трудом их формулирует устно или письменно.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Последовательно излагает информацию устно и письменно, может испытывать сложности с формулированием новых мыслей или идей.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Находит точные формулировки для выражения своих мыслей, последовательно излагает их устно и письменно.
-			</MoreThanExpectations>
-		</Indicator>
-		<Indicator Id='6' Title='Аргументация' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Не придает значения убедительности аргументов.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Иногда затрудняется с поиском аргументов, убедительных для целевой аудитории (коллеги/заказчики). В процессе общения пытается построить партнерские отношения, но не всегда успешен.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Находит аргументы, убедительные для целевой аудитории (коллеги/заказчики). В процессе общения выстраивает партнерские отношения.
-			</MoreThanExpectations>
-		</Indicator>
-		<Indicator Id='7' Title='Обратная связь' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Не дает обратной связи по поставленной задаче, ожидает запроса. При возникновении критических проблем, нарушении сроков, избегает контакта.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Предоставляет обратную связь по завершении задачи. При возникновении второстепенных проблем, нарушении сроков информирует только в крайнем случае.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				При выполнении задачи предоставляет промежуточную обратную связь. При возникновении проблем, задержек - немедленно информирует, предлагая варианты решения.
-			</MoreThanExpectations>
-		</Indicator>
-	</Сompetency>
-	<Сompetency Id='3' Title='Мотивация' Enabled='true' xml:space='preserve'>
-		<Indicator Id='8' Title='Готовность к развитию' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Использует ограниченный круг знаний и навыков, позволяющий решать  узкий круг задач. Не растет профессионально.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Развивает профессиональные знания и навыки, позволящие решить большинство поставленных задач.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Постоянно развивает профессиональные знания и навыки, позволяющие решить большинство сложных задач.
-			</MoreThanExpectations>
-		</Indicator>
-		<Indicator Id='9' Title='Мотивация/Лояльность' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Относится к работе формально, стремится выполнять минимум задач.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Настроен на работу в компании, старается оправдывать ожидания руководителя.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Настроен на рост в рамках компании, прилагает усилия что бы превосходить ожидания руководителя и коллег.
-			</MoreThanExpectations>
-		</Indicator>
-	</Сompetency>
-	<Сompetency Id='4' Title='Готовность к изменениям' Enabled='true' xml:space='preserve'>
-		<Indicator Id='10' Title='Готовность к изменеиям' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Неспособен адаптироваться к изменившимся условиям, корректирует решения и планы только после давления со стороны руководства.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Адаптирует поведение в соответствии с изменившейся ситуацией, корректирует ранее принятые решения и планы с учетом новых данных.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Адаптирует поведение с учетом ожидаемого развития ситуации, корректирует ранее принятые решения и планы, предупреждая возникающие риски.
-			</MoreThanExpectations>
-		</Indicator>
-		<Indicator Id='11' Title='Лидерство' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Избегает делиться знаниями.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Делится знаниями с коллегами, берет на себя ответственность за коллективный результат.
-			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Охотно делится знаниями с коллегами, берет на себя ответственность за коллективный результат.
+			<MoreThanExpectations xml:space='preserve'>Бери хуле
 			</MoreThanExpectations>
 		</Indicator>
 	</Сompetency>
 <Сompetency Id='5' Title='Готовность к изменениям' Enabled='true' xml:space='preserve'>
-		<Indicator Id='12' Title='Готовность к изменеиям' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Неспособен адаптироваться к изменившимся условиям, корректирует решения и планы только после давления со стороны руководства.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Адаптирует поведение в соответствии с изменившейся ситуацией, корректирует ранее принятые решения и планы с учетом новых данных.
+		<Indicator Id='3' Title='Семки есть?' Enabled='true' xml:space='preserve'>
+			<LessThanExpectations xml:space='preserve'>Нету</LessThanExpectations>
+			<EqualsToExpectations xml:space='preserve'>Не дам
 			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Адаптирует поведение с учетом ожидаемого развития ситуации, корректирует ранее принятые решения и планы, предупреждая возникающие риски.
+			<MoreThanExpectations xml:space='preserve'>Бери хуле
 			</MoreThanExpectations>
 		</Indicator>
-		<Indicator Id='13' Title='Лидерство' Enabled='true' xml:space='preserve'>
-			<LessThanExpectations xml:space='preserve'>
-				Избегает делиться знаниями.
-			</LessThanExpectations>
-			<EqualsToExpectations xml:space='preserve'>
-				Делится знаниями с коллегами, берет на себя ответственность за коллективный результат.
+		<Indicator Id='4' Title='Мабила есть?' Enabled='true' xml:space='preserve'>
+			<LessThanExpectations xml:space='preserve'>Нету</LessThanExpectations>
+			<EqualsToExpectations xml:space='preserve'>Не дам
 			</EqualsToExpectations>
-			<MoreThanExpectations xml:space='preserve'>
-				Охотно делится знаниями с коллегами, берет на себя ответственность за коллективный результат.
+			<MoreThanExpectations xml:space='preserve'>Бери хуле
 			</MoreThanExpectations>
 		</Indicator>
 	</Сompetency>

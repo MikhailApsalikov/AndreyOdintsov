@@ -226,6 +226,7 @@
     <Content Include="Views\Accounts\ResetPassword.cshtml" />
     <Content Include="Views\Home\CompetencyList.cshtml" />
     <Content Include="Views\Home\ProfCompetencyLists.cshtml" />
+    <Content Include="Views\Home\ProfCompetencyList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

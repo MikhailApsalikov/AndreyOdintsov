@@ -46,5 +46,52 @@
 			ViewBag.CompetencyLists = CompetencyListWorkflow.GetProfCompetencyLists();
 			return View();
 		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult CreateProfCompetencyList(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+			{
+				SetError("Имя новой компетенции не может быть пустым");
+				return RedirectToAction("ProfCompetencyLists");
+			}
+
+			if (CompetencyListWorkflow.IsProfCompetencyExist(name))
+			{
+				SetError("Такая компетенция уже существует");
+			}
+
+			return RedirectToAction("ProfCompetencyList", new { name });
+		}
+
+		[Authorize(Roles = "Admin")]
+		public ActionResult ProfCompetencyList(string name)
+		{
+			ViewBag.FunctionalArea = name;
+			ViewBag.CompetencyList = ClWorkflow.GetProfCompetencyListAsText(name);
+			return View();
+		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpPost, ValidateInput(false), ActionName("ProfCompetencyList")]
+		public ActionResult ProfCompetencyListPost(string name)
+		{
+			string text = Request.Form["xml"];
+
+			try
+			{
+				ClWorkflow.SetProfCompetencyListAsText(name, text);
+			}
+			catch (Exception e)
+			{
+				SetError("Ошибка: " + e.Message);
+				ViewBag.CompetencyList = text;
+				return View();
+			}
+
+			return RedirectToAction("Index", "Home");
+		}
 	}
 }

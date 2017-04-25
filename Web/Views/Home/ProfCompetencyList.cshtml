@@ -1,16 +1,16 @@
 ﻿@{
-    ViewBag.Title = "Компетенции и индикаторы";
+	ViewBag.Title = $"[{ViewBag.FunctionalArea}]Компетенции и индикаторы";
 }
 
-<h2>Список компетенций и индикаторов</h2>
+<h2>Список профессиональных компетенций и индикаторов для функциональной области "@ViewBag.FunctionalArea"</h2>
 
 @using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
+	@Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-		<hr />
-        <h4>Правила заполнения данного файла:</h4>
+	<div class="form-horizontal">
+		<hr/>
+		<h4>Правила заполнения данного файла:</h4>
 		<ol>
 			<li>Корневой элемент - CompetencyList. Не изменять.</li>
 			<li>CompetencyList содержит список компетенций - элементы Сompetency.</li>
@@ -21,10 +21,10 @@
 			<li>НИЧЕГО НЕ УДАЛЯТЬ, иначе заполненные сотрудниками оценки могут быть утеряны. Вместо удаления, для компетенций и индикаторов предусмотрен аттрибут "Enabled", значение которого следует установить в "false"</li>
 		</ol>
 
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+		@Html.ValidationSummary(true, "", new {@class = "text-danger"})
 		<div class="form-group">
 			<div class="col-md-10">
-				<input type="submit" value="Сохранить" class="btn btn-default" />
+				<input type="submit" value="Сохранить" class="btn btn-default"/>
 			</div>
 		</div>
 
@@ -35,9 +35,11 @@
 
 		<div class="form-group">
 			<label for="xml" class="control-label">CompetencyList.xml</label>
-			<textarea style="min-height:400px" name="xml" id="xml" class="form-control">@ViewBag.CompetencyList</textarea>
+			<textarea style="min-height: 400px" name="xml" id="xml" class="form-control">@ViewBag.CompetencyList</textarea>
 		</div>
 	</div>
+
+	<input type="hidden" value="@ViewBag.FunctionalArea"/>
 }
 
 <link rel="stylesheet" href="~/Content/xonomy.css" />

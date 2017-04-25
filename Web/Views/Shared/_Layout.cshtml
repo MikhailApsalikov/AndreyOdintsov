@@ -64,7 +64,10 @@
 	</nav>
 
 	<div class="container">
-		<p class="text-danger">@ViewBag.Error</p>
+		@if (TempData["Error"] != null)
+		{
+			<p class="text-danger">@TempData["Error"]</p>
+		}
 		@RenderBody()
 	</div>
 
