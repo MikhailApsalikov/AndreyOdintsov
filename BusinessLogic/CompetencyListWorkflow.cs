@@ -73,6 +73,7 @@
 		public void CreateNewProfCompetency(string name)
 		{
 			SetProfCompetencyListAsText(name, NewTemplate);
+			HttpContext.Current.Cache.Remove("ProfCompetencyList");
 		}
 
 		const string NewTemplate = @"<CompetencyList xml:space='preserve'>

@@ -10,7 +10,10 @@
 
 @foreach (string competencyList in ViewBag.CompetencyLists)
 {
-	@Html.ActionLink(competencyList, "ProfCompetencyList", new { name = competencyList })
+	<div>
+		@Html.ActionLink(competencyList, "ProfCompetencyList", new { name = competencyList })
+	</div>
+	
 }
 
 @using (Html.BeginForm("CreateProfCompetencyList", "Home", FormMethod.Post))
