@@ -69,5 +69,20 @@
 		{
 			return GetProfCompetencyLists().Any(s => s.ToUpperInvariant() == name.ToUpperInvariant());
 		}
+
+		public void CreateNewProfCompetency(string name)
+		{
+			SetProfCompetencyListAsText(name, NewTemplate);
+		}
+
+		const string NewTemplate = @"<CompetencyList xml:space='preserve'>
+	<Сompetency Id='1' Title='Компетенция' Enabled='true' xml:space='preserve'>
+		<Indicator Id = '1' Title='Индикатор' Enabled='true' xml:space='preserve'>
+			<LessThanExpectations xml:space='preserve'>Ниже ожиданий!</LessThanExpectations>
+			<EqualsToExpectations xml:space='preserve'>Соответствует ожиданиям!</EqualsToExpectations>
+			<MoreThanExpectations xml:space='preserve'>Выше ожиданий!</MoreThanExpectations>
+		</Indicator>
+	</Сompetency>
+</CompetencyList>";
 	}
 }

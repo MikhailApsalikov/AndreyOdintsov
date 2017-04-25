@@ -63,6 +63,7 @@
 				SetError("Такая компетенция уже существует");
 			}
 
+			ClWorkflow.CreateNewProfCompetency(name);
 			return RedirectToAction("ProfCompetencyList", new { name });
 		}
 
