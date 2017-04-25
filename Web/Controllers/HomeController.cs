@@ -61,6 +61,7 @@
 			if (CompetencyListWorkflow.IsProfCompetencyExist(name))
 			{
 				SetError("Такая компетенция уже существует");
+				return RedirectToAction("ProfCompetencyList", new { name });
 			}
 
 			ClWorkflow.CreateNewProfCompetency(name);
