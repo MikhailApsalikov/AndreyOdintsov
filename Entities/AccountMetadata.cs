@@ -8,6 +8,8 @@
 	{
 		[Display(Name = "Активен")] public string Active;
 
+		[Display(Name = "Админ. руководитель")] public string AdministrativeManager;
+
 		[Display(Name = "Таб. номер")] public string Code;
 
 		[Display(Name = "Отдел(ФН)")] public string Department;
@@ -22,8 +24,6 @@
 
 		[Display(Name = "Логин")] [RegularExpression(@"[a-zA-Z0-9]+")] [Required] public string Login;
 
-		[Display(Name = "Админ. руководитель")] public string AdministrativeManager;
-
 		[Display(Name = "Функц. руководитель")] public string Manager;
 
 		[Display(Name = "Макрорегион")] public string MicroRegion;
@@ -35,5 +35,8 @@
 		[Display(Name = "Роль")] public Role Role;
 
 		[Display(Name = "Пол")] public string Sex;
+
+		[Display(Name = "Функц. область")]
+		public string FunctionalArea { get; set; }
 	}
 }

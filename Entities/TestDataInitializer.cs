@@ -176,7 +176,8 @@
 					Role = Role.Employee,
 					Guid = Guid.NewGuid().ToString(),
 					ManagerId = 3,
-					AdministrativeManagerId = 2
+					AdministrativeManagerId = 2,
+					FunctionalArea = "абап"
 				},
 				new Account
 				{
@@ -212,7 +213,8 @@
 					Role = Role.Employee,
 					Guid = Guid.NewGuid().ToString(),
 					ManagerId = 3,
-					AdministrativeManagerId = 2
+					AdministrativeManagerId = 2,
+					FunctionalArea = "финансист"
 				}
 			};
 

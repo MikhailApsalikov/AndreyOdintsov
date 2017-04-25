@@ -2,6 +2,7 @@
 {
 	using System;
 	using System.Web.Mvc;
+	using BusinessLogic;
 
 	[Authorize]
 	public class HomeController : BaseController
@@ -42,7 +43,7 @@
 		[Authorize(Roles = "Admin")]
 		public ActionResult ProfCompetencyLists()
 		{
-			ViewBag.CompetencyLists = ClWorkflow.GetProfCompetencyLists();
+			ViewBag.CompetencyLists = CompetencyListWorkflow.GetProfCompetencyLists();
 			return View();
 		}
 	}

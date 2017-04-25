@@ -45,7 +45,7 @@
 			{
 				return false;
 			}
-			return examinee.Manager != null || examinee.AdministrativeManager != null; 
+			return (examinee.Manager != null || examinee.AdministrativeManager != null) && !string.IsNullOrEmpty(examinee.FunctionalArea) && CompetencyListWorkflow.IsProfCompetencyExist(examinee.FunctionalArea); 
 		}
 	}
 }

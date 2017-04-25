@@ -282,9 +282,9 @@
 			{
 				return HttpNotFound();
 			}
-			if (id.HasValue && account.Role != Role.Employee && EvaluationWorkflow.CanPass(account.Login))
+			if (!id.HasValue && account.Role == Role.Employee && !EvaluationWorkflow.CanPass(account.Login))
 			{
-				SetError("Внимание! Вы не можете проходить оценку компетенций, потому что для вас в системе не указан ни функциональный, ни административный руководитель!");
+				SetError("Внимание! Вы не можете проходить оценку компетенций, потому что для вас в системе не указано ни функционального, ни административного руководителя!");
 			}
 			ViewBag.CompetencyList = ClWorkflow.GetCompetencyList().Competencies;
 			return View(account);
@@ -305,7 +305,7 @@
 		[ValidateAntiForgeryToken]
 		[Authorize(Roles = "Admin,FunctionalManager")]
 		public ActionResult Create(
-			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId,AdministrativeManagerId")] Account
+			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId,AdministrativeManagerId,FunctionalArea")] Account
 				account)
 		{
 			Account dbAccount = Db.Accounts.FirstOrDefault(a => a.Login == account.Login);
@@ -371,7 +371,7 @@
 		[ValidateAntiForgeryToken]
 		[Authorize(Roles = "Admin,AdministrativeManager,FunctionalManager,DirectManager")]
 		public ActionResult Edit(
-			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId,AdministrativeManagerId")] Account
+			[Bind(Include = "Id,Code,Region,MicroRegion,FullName,Sex,Role,Department,Position,Login,Active,ManagerId,AdministrativeManagerId,FunctionalArea")] Account
 				account)
 		{
 			if (ModelState.IsValid)

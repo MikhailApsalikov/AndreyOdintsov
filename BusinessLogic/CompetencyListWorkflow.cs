@@ -4,6 +4,8 @@
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Web;
+	using System.Web.Caching;
 	using System.Web.Hosting;
 	using System.Xml.Serialization;
 	using XmlEntities;
@@ -43,13 +45,29 @@
 
 		public void SetProfCompetencyListAsText(string name, string data)
 		{
-			new XmlSerializer(typeof(CompetencyList)).Deserialize(new StringReader(data));
+			new XmlSerializer(typeof (CompetencyList)).Deserialize(new StringReader(data));
 			File.WriteAllText(HostingEnvironment.MapPath(string.Format(ProfCompetencyListPath, name)), data);
 		}
 
-		public IEnumerable<string> GetProfCompetencyLists()
+		public static IEnumerable<string> GetProfCompetencyLists()
 		{
-			return Directory.GetFiles(HostingEnvironment.MapPath(ProfCompetencyListDirectory), "*.xml").Select(Path.GetFileNameWithoutExtension);
+			var files = HttpContext.Current.Cache.Get("ProfCompetencyList") as IEnumerable<string>;
+			if (files != null)
+			{
+				return files;
+			}
+
+			files =
+				Directory.GetFiles(HostingEnvironment.MapPath(ProfCompetencyListDirectory), "*.xml")
+					.Select(Path.GetFileNameWithoutExtension);
+			HttpContext.Current.Cache.Add("ProfCompetencyList", files, null, DateTime.Now.AddMinutes(15),
+				Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+			return files;
+		}
+
+		public static bool IsProfCompetencyExist(string name)
+		{
+			return GetProfCompetencyLists().Any(s => s.ToUpperInvariant() == name.ToUpperInvariant());
 		}
 	}
 }
