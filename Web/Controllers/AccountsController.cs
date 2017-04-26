@@ -141,6 +141,11 @@
 				}
 			}
 
+			if (currentAccount.Role == Role.AdministrativeManager)
+			{
+				accounts = accounts.Where(a => a.AdministrativeManager.Id == currentAccount.Id);
+			}
+
 			// =======================     Сортировки      =============================
 
 			ViewBag.CodeSortParm = sortOrder != "+Code" ? "+Code" : "-Code";

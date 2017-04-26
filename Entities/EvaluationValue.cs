@@ -16,5 +16,26 @@
 		/// </summary>
 		public double? ManagerValue { get; set; }
 		public virtual Evaluation Evaluation { get; set; }
+
+		public double GetAvg()
+		{
+			
+			if (!ReviewValue.HasValue && !ManagerValue.HasValue)
+			{
+				return 0;
+			}
+
+			if (ReviewValue.HasValue && !ManagerValue.HasValue)
+			{
+				return ReviewValue.Value;
+			}
+
+			if (!ReviewValue.HasValue)
+			{
+				return ManagerValue.Value;
+			}
+
+			return (ReviewValue.Value + ManagerValue.Value) / 2;
+		}
 	}
 }

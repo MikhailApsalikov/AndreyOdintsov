@@ -1,4 +1,5 @@
-﻿@using BusinessLogic
+﻿@using System.Globalization
+@using BusinessLogic
 @model Account
 
 @{
@@ -7,380 +8,380 @@
 	var account = ViewBag.CurrentAccount as Account;
 	var competencyList = ViewBag.CompetencyList as List<Competency>;
 	var profCompetencyList = ViewBag.ProfCompetencyList as List<Competency>;
-	var lastReviewedEvaluation = Model.GetLastReviewedEvaluation();
-	var lastReviewedProfEvaluation = Model.GetProfLastReviewedEvaluation();
-	var competencies = lastReviewedEvaluation?.EvaluationValues.GroupBy(k => k.Competency)
-		.Select(g => g.FirstOrDefault().Competency).ToArray() ?? new int?[] { };
-	var profCompetencies = lastReviewedProfEvaluation?.EvaluationValues.GroupBy(k => k.Competency)
-		.Select(g => g.FirstOrDefault().Competency).ToArray() ?? new int?[] { };
+	Evaluation lastReviewedEvaluation = Model.GetLastReviewedEvaluation();
+	ProfEvaluation lastReviewedProfEvaluation = Model.GetProfLastReviewedEvaluation();
+	int?[] competencies = lastReviewedEvaluation?.EvaluationValues.GroupBy(k => k.Competency)
+		.Select(g => g.FirstOrDefault().Competency).ToArray() ?? new int?[] {};
+	int?[] profCompetencies = lastReviewedProfEvaluation?.EvaluationValues.GroupBy(k => k.Competency)
+		.Select(g => g.FirstOrDefault().Competency).ToArray() ?? new int?[] {};
 	List<Evaluation> evaluationsForDevChart = Model?.Evaluations.Where(s => s.GetPercent() != null).ToList();
-	List<ProfEvaluation> profEvaluationsForDevChart = Model?.ProfEvaluations.Where(s => s.GetPercent() != null).ToList();
+	List<ProfEvaluation> profEvaluationsForDevChart = Model?.ProfEvaluations.Where(s => s.GetPercent() != null).OrderBy(s => s.Reviewed).ToList();
 }
 
 <h2>Подробно о @Model.FullName</h2>
 
 <div>
-	<hr />
-	@if (User.IsInRole("Admin"))
+<hr/>
+@if (User.IsInRole("Admin"))
+{
+	<p>
+		@Html.ActionLink("Изменить", "Edit", new {id = Model.Id}) |
+		@Html.ActionLink("Сбросить пароль", "ResetPassword", new {id = Model.Id})
+	</p>
+}
+<dl class="dl-horizontal">
+<dt>@Html.DisplayNameFor(model => model.Code)</dt>
+<dd>@Html.DisplayFor(model => model.Code)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.Region)</dt>
+<dd>@Html.DisplayFor(model => model.Region)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.MicroRegion)</dt>
+<dd>@Html.DisplayFor(model => model.MicroRegion)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.Department)</dt>
+<dd>@Html.DisplayFor(model => model.Department)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.Position)</dt>
+<dd>@Html.DisplayFor(model => model.Position)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.FunctionalArea)</dt>
+<dd>@Html.DisplayFor(model => model.FunctionalArea)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.FullName)</dt>
+<dd>@Html.DisplayFor(model => model.FullName)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.Sex)</dt>
+<dd>@Html.DisplayFor(model => model.Sex)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.Login)</dt>
+<dd>@Html.DisplayFor(model => model.Login)</dd>
+
+<dt>@Html.DisplayNameFor(model => model.Active)</dt>
+<dd>@Html.DisplayFor(model => model.Active)</dd>
+
+@if (Model.AdministrativeManager != null)
+{
+	<dt>@Html.DisplayNameFor(model => model.AdministrativeManager)</dt>
+	<dd>@Html.ActionLink(Model.AdministrativeManager.FullName, "Details", new {Model.AdministrativeManager.Id})</dd>
+}
+@if (Model.Manager != null)
+{
+	<dt>@Html.DisplayNameFor(model => model.Manager)</dt>
+	<dd>@Html.ActionLink(Model.Manager.FullName, "Details", new {Model.Manager.Id})</dd>
+}
+
+@if (Model.Evaluations.Count > 0)
+{
+	<dt class="nowrap">
+		@Html.DisplayNameFor(model => model.Evaluations)
+	</dt>
+
+	<dd>
+		<table class="table">
+			<tr class="info">
+				<th>Дата оценки сотрудника</th>
+				<th>Дата ревью функц. руководителя</th>
+				<th>Дата ревью админ. руководителя</th>
+				<th>Должность сотрудника</th>
+				<th>Оценка сотрудника</th>
+				<th>Оценка функц. руководителя</th>
+				<th>Оценка админ. руководителя</th>
+				<th>Минимальный/Средний/Максимальный балл</th>
+				<th>Общий результат оценки, %</th>
+				<th></th>
+			</tr>
+			@foreach (Evaluation evaluation in Model.Evaluations.OrderByDescending(e => e.Passed))
+			{
+				<tr>
+					<td>@evaluation.Passed</td>
+					<td>@evaluation.Reviewed</td>
+					<td>@evaluation.ManagerReviewed</td>
+					<td>@evaluation.Position</td>
+					<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
+					<td>@evaluation.ReviewedResult</td>
+					<td>@evaluation.ManagerResult</td>
+					<td>
+						@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount*2)/@(evaluation.IndicatorsCount*3)
+					</td>
+					<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
+					<td>
+						@Html.ActionLink("Просмотр", "Details", "Evaluation", new {id = evaluation.Id}, null)
+
+						@if (EvaluationWorkflow.CanBeReviewedBy(account, Model))
+						{
+							<br/>
+							@Html.ActionLink("Выполнить ревью", "Review", "Evaluation", new {id = evaluation.Id}, null)
+						}
+					</td>
+				</tr>
+			}
+		</table>
+	</dd>
+}
+
+@if (Model.EvaluationsReviews.Count > 0)
+{
+	<dt class="nowrap">
+		@Html.DisplayNameFor(model => model.EvaluationsReviews)
+	</dt>
+
+	<dd>
+		<table class="table">
+			<tr class="info">
+				<th>Сотрудник</th>
+				<th>Дата оценки сотрудника</th>
+				<th>Дата ревью функц. руководителя</th>
+				<th>Дата ревью админ. руководителя</th>
+				<th>Должность сотрудника</th>
+				<th>Оценка сотрудника</th>
+				<th>Оценка функц. руководителя</th>
+				<th>Оценка админ. руководителя</th>
+				<th>Минимальный/Средний/Максимальный балл</th>
+				<th>Общий результат оценки, %</th>
+				<th></th>
+			</tr>
+			@foreach (Evaluation evaluation in Model.EvaluationsReviews.OrderByDescending(e => e.Passed))
+			{
+				<tr>
+					<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new {evaluation.Examinee.Id}, null)</td>
+					<td>@evaluation.Passed</td>
+					<td>@evaluation.Reviewed</td>
+					<td>@evaluation.ManagerReviewed</td>
+					<td>@evaluation.Position</td>
+					<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
+					<td>@evaluation.ReviewedResult</td>
+					<td>@evaluation.ManagerResult</td>
+					<td>
+						@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount*2)/@(evaluation.IndicatorsCount*3)
+					</td>
+					<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
+					<td>
+						@Html.ActionLink("Просмотр", "Details", "Evaluation", new {id = evaluation.Id}, null)
+					</td>
+				</tr>
+			}
+		</table>
+	</dd>
+}
+
+@if (Model.EvaluationsManages.Count > 0)
+{
+	<dt class="nowrap">
+		@Html.DisplayNameFor(model => model.EvaluationsManages)
+	</dt>
+
+	<dd>
+		<table class="table">
+			<tr class="info">
+				<th>Cотрудник</th>
+				<th>Дата оценки сотрудника</th>
+				<th>Дата ревью функц. руководителя</th>
+				<th>Дата ревью админ. руководителя</th>
+				<th>Должность сотрудника</th>
+				<th>Оценка сотрудника</th>
+				<th>Оценка функц. руководителя</th>
+				<th>Оценка админ. руководителя</th>
+				<th>Минимальный/Средний/Максимальный балл</th>
+				<th>Общий результат оценки, %</th>
+				<th></th>
+			</tr>
+			@foreach (Evaluation evaluation in Model.EvaluationsManages.OrderByDescending(e => e.Passed))
+			{
+				<tr>
+					<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new {evaluation.Examinee.Id}, null)</td>
+					<td>@evaluation.Passed</td>
+					<td>@evaluation.Reviewed</td>
+					<td>@evaluation.ManagerReviewed</td>
+					<td>@evaluation.Position</td>
+					<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
+					<td>@evaluation.ReviewedResult</td>
+					<td>@evaluation.ManagerResult</td>
+					<td>
+						@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount*2)/@(evaluation.IndicatorsCount*3)
+					</td>
+					<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
+					<td>
+						@Html.ActionLink("Просмотр", "Details", "Evaluation", new {id = evaluation.Id}, null)
+					</td>
+				</tr>
+			}
+		</table>
+	</dd>
+}
+
+@if (Model.ProfEvaluations.Count > 0)
+{
+	<dt class="nowrap">
+		@Html.DisplayNameFor(model => model.ProfEvaluations)
+	</dt>
+
+	<dd>
+		<table class="table">
+			<tr class="info">
+				<th>Дата оценки сотрудника</th>
+				<th>Дата ревью функц. руководителя</th>
+				<th>Дата ревью админ. руководителя</th>
+				<th>Должность сотрудника</th>
+				<th>Оценка сотрудника</th>
+				<th>Оценка функц. руководителя</th>
+				<th>Оценка админ. руководителя</th>
+				<th>Минимальный/Средний/Максимальный балл</th>
+				<th>Общий результат оценки, %</th>
+				<th></th>
+			</tr>
+			@foreach (ProfEvaluation evaluation in Model.ProfEvaluations.OrderByDescending(e => e.Passed))
+			{
+				<tr>
+					<td>@evaluation.Passed</td>
+					<td>@evaluation.Reviewed</td>
+					<td>@evaluation.ManagerReviewed</td>
+					<td>@evaluation.Position</td>
+					<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
+					<td>@evaluation.ReviewedResult</td>
+					<td>@evaluation.ManagerResult</td>
+					<td>
+						@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount*2)/@(evaluation.IndicatorsCount*3)
+					</td>
+					<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
+					<td>
+						@Html.ActionLink("Просмотр", "Details", "ProfEvaluation", new {id = evaluation.Id}, null)
+
+						@if (EvaluationWorkflow.CanBeReviewedBy(account, Model))
+						{
+							<br/>
+							@Html.ActionLink("Выполнить ревью", "Review", "ProfEvaluation", new {id = evaluation.Id}, null)
+						}
+					</td>
+				</tr>
+			}
+		</table>
+	</dd>
+}
+
+@if (Model.ProfEvaluationsReviews.Count > 0)
+{
+	<dt class="nowrap">
+		@Html.DisplayNameFor(model => model.ProfEvaluationsReviews)
+	</dt>
+
+	<dd>
+		<table class="table">
+			<tr class="info">
+				<th>Сотрудник</th>
+				<th>Дата оценки сотрудника</th>
+				<th>Дата ревью функц. руководителя</th>
+				<th>Дата ревью админ. руководителя</th>
+				<th>Должность сотрудника</th>
+				<th>Оценка сотрудника</th>
+				<th>Оценка функц. руководителя</th>
+				<th>Оценка админ. руководителя</th>
+				<th>Минимальный/Средний/Максимальный балл</th>
+				<th>Общий результат оценки, %</th>
+				<th></th>
+			</tr>
+			@foreach (ProfEvaluation evaluation in Model.ProfEvaluationsReviews.OrderByDescending(e => e.Passed))
+			{
+				<tr>
+					<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new {evaluation.Examinee.Id}, null)</td>
+					<td>@evaluation.Passed</td>
+					<td>@evaluation.Reviewed</td>
+					<td>@evaluation.ManagerReviewed</td>
+					<td>@evaluation.Position</td>
+					<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
+					<td>@evaluation.ReviewedResult</td>
+					<td>@evaluation.ManagerResult</td>
+					<td>
+						@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount*2)/@(evaluation.IndicatorsCount*3)
+					</td>
+					<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
+					<td>
+						@Html.ActionLink("Просмотр", "Details", "ProfEvaluation", new {id = evaluation.Id}, null)
+					</td>
+				</tr>
+			}
+		</table>
+	</dd>
+}
+
+@if (Model.ProfEvaluationsManages.Count > 0)
+{
+	<dt class="nowrap">
+		@Html.DisplayNameFor(model => model.ProfEvaluationsManages)
+	</dt>
+
+	<dd>
+		<table class="table">
+			<tr class="info">
+				<th>Cотрудник</th>
+				<th>Дата оценки сотрудника</th>
+				<th>Дата ревью функц. руководителя</th>
+				<th>Дата ревью админ. руководителя</th>
+				<th>Должность сотрудника</th>
+				<th>Оценка сотрудника</th>
+				<th>Оценка функц. руководителя</th>
+				<th>Оценка админ. руководителя</th>
+				<th>Минимальный/Средний/Максимальный балл</th>
+				<th>Общий результат оценки, %</th>
+				<th></th>
+			</tr>
+			@foreach (ProfEvaluation evaluation in Model.ProfEvaluationsManages.OrderByDescending(e => e.Passed))
+			{
+				<tr>
+					<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new {evaluation.Examinee.Id}, null)</td>
+					<td>@evaluation.Passed</td>
+					<td>@evaluation.Reviewed</td>
+					<td>@evaluation.ManagerReviewed</td>
+					<td>@evaluation.Position</td>
+					<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
+					<td>@evaluation.ReviewedResult</td>
+					<td>@evaluation.ManagerResult</td>
+					<td>
+						@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount*2)/@(evaluation.IndicatorsCount*3)
+					</td>
+					<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
+					<td>
+						@Html.ActionLink("Просмотр", "Details", "ProfEvaluation", new {id = evaluation.Id}, null)
+					</td>
+				</tr>
+			}
+		</table>
+	</dd>
+}
+
+</dl>
+<div class="charts-container">
+	@if (lastReviewedEvaluation != null)
 	{
-		<p>
-			@Html.ActionLink("Изменить", "Edit", new { id = Model.Id }) |
-			@Html.ActionLink("Сбросить пароль", "ResetPassword", new { id = Model.Id })
-		</p>
+		<div class="chart-container chart-radar">
+			<h4>График компетенций по личностным оценкам:</h4>
+			<canvas id="chart"></canvas>
+		</div>
 	}
-	<dl class="dl-horizontal">
-		<dt>@Html.DisplayNameFor(model => model.Code)</dt>
-		<dd>@Html.DisplayFor(model => model.Code)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.Region)</dt>
-		<dd>@Html.DisplayFor(model => model.Region)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.MicroRegion)</dt>
-		<dd>@Html.DisplayFor(model => model.MicroRegion)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.Department)</dt>
-		<dd>@Html.DisplayFor(model => model.Department)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.Position)</dt>
-		<dd>@Html.DisplayFor(model => model.Position)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.FunctionalArea)</dt>
-		<dd>@Html.DisplayFor(model => model.FunctionalArea)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.FullName)</dt>
-		<dd>@Html.DisplayFor(model => model.FullName)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.Sex)</dt>
-		<dd>@Html.DisplayFor(model => model.Sex)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.Login)</dt>
-		<dd>@Html.DisplayFor(model => model.Login)</dd>
-
-		<dt>@Html.DisplayNameFor(model => model.Active)</dt>
-		<dd>@Html.DisplayFor(model => model.Active)</dd>
-
-		@if (Model.AdministrativeManager != null)
-		{
-			<dt>@Html.DisplayNameFor(model => model.AdministrativeManager)</dt>
-			<dd>@Html.ActionLink(Model.AdministrativeManager.FullName, "Details", new { Id = Model.AdministrativeManager.Id })</dd>
-		}
-		@if (Model.Manager != null)
-		{
-			<dt>@Html.DisplayNameFor(model => model.Manager)</dt>
-			<dd>@Html.ActionLink(Model.Manager.FullName, "Details", new { Id = Model.Manager.Id })</dd>
-		}
-
-		@if (Model.Evaluations.Count > 0)
-		{
-			<dt class="nowrap">
-				@Html.DisplayNameFor(model => model.Evaluations)
-			</dt>
-
-			<dd>
-				<table class="table">
-					<tr class="info">
-						<th>Дата оценки сотрудника</th>
-						<th>Дата ревью функц. руководителя</th>
-						<th>Дата ревью админ. руководителя</th>
-						<th>Должность сотрудника</th>
-						<th>Оценка сотрудника</th>
-						<th>Оценка функц. руководителя</th>
-						<th>Оценка админ. руководителя</th>
-						<th>Минимальный/Средний/Максимальный балл</th>
-						<th>Общий результат оценки, %</th>
-						<th></th>
-					</tr>
-					@foreach (var evaluation in Model.Evaluations.OrderByDescending(e => e.Passed))
-				{
-						<tr>
-							<td>@evaluation.Passed</td>
-							<td>@evaluation.Reviewed</td>
-							<td>@evaluation.ManagerReviewed</td>
-							<td>@evaluation.Position</td>
-							<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
-							<td>@evaluation.ReviewedResult</td>
-							<td>@evaluation.ManagerResult</td>
-							<td>
-								@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
-							</td>
-							<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
-							<td>
-								@Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
-
-								@if (EvaluationWorkflow.CanBeReviewedBy(account, Model))
-								{
-									<br />
-									@Html.ActionLink("Выполнить ревью", "Review", "Evaluation", new { id = evaluation.Id }, null)
-								}
-							</td>
-						</tr>
-				}
-				</table>
-			</dd>
-		}
-
-		@if (Model.EvaluationsReviews.Count > 0)
-		{
-			<dt class="nowrap">
-				@Html.DisplayNameFor(model => model.EvaluationsReviews)
-			</dt>
-
-			<dd>
-				<table class="table">
-					<tr class="info">
-						<th>Сотрудник</th>
-						<th>Дата оценки сотрудника</th>
-						<th>Дата ревью функц. руководителя</th>
-						<th>Дата ревью админ. руководителя</th>
-						<th>Должность сотрудника</th>
-						<th>Оценка сотрудника</th>
-						<th>Оценка функц. руководителя</th>
-						<th>Оценка админ. руководителя</th>
-						<th>Минимальный/Средний/Максимальный балл</th>
-						<th>Общий результат оценки, %</th>
-						<th></th>
-					</tr>
-					@foreach (var evaluation in Model.EvaluationsReviews.OrderByDescending(e => e.Passed))
-				{
-						<tr>
-							<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new { Id = evaluation.Examinee.Id }, null)</td>
-							<td>@evaluation.Passed</td>
-							<td>@evaluation.Reviewed</td>
-							<td>@evaluation.ManagerReviewed</td>
-							<td>@evaluation.Position</td>
-							<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
-							<td>@evaluation.ReviewedResult</td>
-							<td>@evaluation.ManagerResult</td>
-							<td>
-								@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
-							</td>
-							<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
-							<td>
-								@Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
-							</td>
-						</tr>
-				}
-				</table>
-			</dd>
-		}
-
-		@if (Model.EvaluationsManages.Count > 0)
-		{
-			<dt class="nowrap">
-				@Html.DisplayNameFor(model => model.EvaluationsManages)
-			</dt>
-
-			<dd>
-				<table class="table">
-					<tr class="info">
-						<th>Cотрудник</th>
-						<th>Дата оценки сотрудника</th>
-						<th>Дата ревью функц. руководителя</th>
-						<th>Дата ревью админ. руководителя</th>
-						<th>Должность сотрудника</th>
-						<th>Оценка сотрудника</th>
-						<th>Оценка функц. руководителя</th>
-						<th>Оценка админ. руководителя</th>
-						<th>Минимальный/Средний/Максимальный балл</th>
-						<th>Общий результат оценки, %</th>
-						<th></th>
-					</tr>
-					@foreach (var evaluation in Model.EvaluationsManages.OrderByDescending(e => e.Passed))
-				{
-						<tr>
-							<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new { Id = evaluation.Examinee.Id }, null)</td>
-							<td>@evaluation.Passed</td>
-							<td>@evaluation.Reviewed</td>
-							<td>@evaluation.ManagerReviewed</td>
-							<td>@evaluation.Position</td>
-							<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
-							<td>@evaluation.ReviewedResult</td>
-							<td>@evaluation.ManagerResult</td>
-							<td>
-								@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
-							</td>
-							<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
-							<td>
-								@Html.ActionLink("Просмотр", "Details", "Evaluation", new { id = evaluation.Id }, null)
-							</td>
-						</tr>
-				}
-				</table>
-			</dd>
-		}
-
-		@if (Model.ProfEvaluations.Count > 0)
-		{
-			<dt class="nowrap">
-				@Html.DisplayNameFor(model => model.ProfEvaluations)
-			</dt>
-
-			<dd>
-				<table class="table">
-					<tr class="info">
-						<th>Дата оценки сотрудника</th>
-						<th>Дата ревью функц. руководителя</th>
-						<th>Дата ревью админ. руководителя</th>
-						<th>Должность сотрудника</th>
-						<th>Оценка сотрудника</th>
-						<th>Оценка функц. руководителя</th>
-						<th>Оценка админ. руководителя</th>
-						<th>Минимальный/Средний/Максимальный балл</th>
-						<th>Общий результат оценки, %</th>
-						<th></th>
-					</tr>
-					@foreach (var evaluation in Model.ProfEvaluations.OrderByDescending(e => e.Passed))
-				{
-						<tr>
-							<td>@evaluation.Passed</td>
-							<td>@evaluation.Reviewed</td>
-							<td>@evaluation.ManagerReviewed</td>
-							<td>@evaluation.Position</td>
-							<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
-							<td>@evaluation.ReviewedResult</td>
-							<td>@evaluation.ManagerResult</td>
-							<td>
-								@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
-							</td>
-							<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
-							<td>
-								@Html.ActionLink("Просмотр", "Details", "ProfEvaluation", new { id = evaluation.Id }, null)
-
-								@if (EvaluationWorkflow.CanBeReviewedBy(account, Model))
-								{
-									<br />
-									@Html.ActionLink("Выполнить ревью", "Review", "ProfEvaluation", new { id = evaluation.Id }, null)
-								}
-							</td>
-						</tr>
-				}
-				</table>
-			</dd>
-		}
-
-		@if (Model.ProfEvaluationsReviews.Count > 0)
-		{
-			<dt class="nowrap">
-				@Html.DisplayNameFor(model => model.ProfEvaluationsReviews)
-			</dt>
-
-			<dd>
-				<table class="table">
-					<tr class="info">
-						<th>Сотрудник</th>
-						<th>Дата оценки сотрудника</th>
-						<th>Дата ревью функц. руководителя</th>
-						<th>Дата ревью админ. руководителя</th>
-						<th>Должность сотрудника</th>
-						<th>Оценка сотрудника</th>
-						<th>Оценка функц. руководителя</th>
-						<th>Оценка админ. руководителя</th>
-						<th>Минимальный/Средний/Максимальный балл</th>
-						<th>Общий результат оценки, %</th>
-						<th></th>
-					</tr>
-					@foreach (var evaluation in Model.ProfEvaluationsReviews.OrderByDescending(e => e.Passed))
-				{
-						<tr>
-							<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new { Id = evaluation.Examinee.Id }, null)</td>
-							<td>@evaluation.Passed</td>
-							<td>@evaluation.Reviewed</td>
-							<td>@evaluation.ManagerReviewed</td>
-							<td>@evaluation.Position</td>
-							<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
-							<td>@evaluation.ReviewedResult</td>
-							<td>@evaluation.ManagerResult</td>
-							<td>
-								@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
-							</td>
-							<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
-							<td>
-								@Html.ActionLink("Просмотр", "Details", "ProfEvaluation", new { id = evaluation.Id }, null)
-							</td>
-						</tr>
-				}
-				</table>
-			</dd>
-		}
-
-		@if (Model.ProfEvaluationsManages.Count > 0)
-		{
-			<dt class="nowrap">
-				@Html.DisplayNameFor(model => model.ProfEvaluationsManages)
-			</dt>
-
-			<dd>
-				<table class="table">
-					<tr class="info">
-						<th>Cотрудник</th>
-						<th>Дата оценки сотрудника</th>
-						<th>Дата ревью функц. руководителя</th>
-						<th>Дата ревью админ. руководителя</th>
-						<th>Должность сотрудника</th>
-						<th>Оценка сотрудника</th>
-						<th>Оценка функц. руководителя</th>
-						<th>Оценка админ. руководителя</th>
-						<th>Минимальный/Средний/Максимальный балл</th>
-						<th>Общий результат оценки, %</th>
-						<th></th>
-					</tr>
-					@foreach (var evaluation in Model.ProfEvaluationsManages.OrderByDescending(e => e.Passed))
-				{
-						<tr>
-							<td>@Html.ActionLink(evaluation.Examinee.FullName, "Details", "Accounts", new { Id = evaluation.Examinee.Id }, null)</td>
-							<td>@evaluation.Passed</td>
-							<td>@evaluation.Reviewed</td>
-							<td>@evaluation.ManagerReviewed</td>
-							<td>@evaluation.Position</td>
-							<td>@evaluation.EvaluationValues.Sum(ev => ev.Value)</td>
-							<td>@evaluation.ReviewedResult</td>
-							<td>@evaluation.ManagerResult</td>
-							<td>
-								@evaluation.IndicatorsCount/@(evaluation.IndicatorsCount * 2)/@(evaluation.IndicatorsCount * 3)
-							</td>
-							<td>@(evaluation.GetPercent() != null ? string.Format("{0:0.00}%", evaluation.GetPercent()) : "")</td>
-							<td>
-								@Html.ActionLink("Просмотр", "Details", "ProfEvaluation", new { id = evaluation.Id }, null)
-							</td>
-						</tr>
-				}
-				</table>
-			</dd>
-		}
-
-	</dl>
-	<div class="charts-container">
-		@if (lastReviewedEvaluation != null)
-		{
-			<div class="chart-container chart-radar">
-				<h4>График компетенций по личностным оценкам:</h4>
-				<canvas id="chart"></canvas>
-			</div>
-		}
-		@if (evaluationsForDevChart != null && evaluationsForDevChart.Any())
-		{
-			<div class="chart-container chart-employeee-development">
-				<h4>График развития сотрудника по личностным оценкам:</h4>
-				<canvas id="over-time-chart"></canvas>
-			</div>
-		}
-	</div>
-	<div class="charts-container">
-		@if (lastReviewedProfEvaluation != null)
-		{
-			<div class="chart-container chart-radar">
-				<h4>График компетенций по профессиональным оценкам:</h4>
-				<canvas id="chart-prof"></canvas>
-			</div>
-		}
-		@if (profEvaluationsForDevChart != null && profEvaluationsForDevChart.Any())
-		{
-			<div class="chart-container chart-employeee-development">
-				<h4>График развития сотрудника по профессиональным оценкам:</h4>
-				<canvas id="over-time-chart-prof"></canvas>
-			</div>
-		}
-	</div>
+	@if (evaluationsForDevChart != null && evaluationsForDevChart.Any())
+	{
+		<div class="chart-container chart-employeee-development">
+			<h4>График развития сотрудника по личностным оценкам:</h4>
+			<canvas id="over-time-chart"></canvas>
+		</div>
+	}
+</div>
+<div class="charts-container">
+	@if (lastReviewedProfEvaluation != null)
+	{
+		<div class="chart-container chart-radar">
+			<h4>График компетенций по профессиональным оценкам:</h4>
+			<canvas id="chart-prof"></canvas>
+		</div>
+	}
+	@if (profEvaluationsForDevChart != null && profEvaluationsForDevChart.Any())
+	{
+		<div class="chart-container chart-employeee-development">
+			<h4>График развития сотрудника по профессиональным оценкам:</h4>
+			<canvas id="over-time-chart-prof"></canvas>
+		</div>
+	}
+</div>
 </div>
 
 @section scripts {
@@ -392,7 +393,7 @@
 		<script type="text/javascript">
 			var data = {
 				labels: [
-					@foreach (var c in competencies)
+					@foreach (int? c in competencies)
 					{
 						@Html.Raw('"' + competencyList.FirstOrDefault(cl => cl.Id == c).Title + "\",")
 					}
@@ -407,12 +408,15 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(179,181,198,1)",
 						data: [
-							@foreach (var c in competencies)
+							@if (lastReviewedEvaluation.ManagerResult.HasValue)
 							{
-								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
-								var count = evs.Count();
-								var sum = evs.Sum(ev => ev.ManagerValue);
-								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
+								foreach (int? c in competencies)
+								{
+									IEnumerable<EvaluationValue> evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
+									int count = evs.Count();
+									double? sum = evs.Sum(ev => ev.ManagerValue);
+									@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
+								}
 							}
 						]
 					},
@@ -425,12 +429,15 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(255,99,132,1)",
 						data: [
-							@foreach (var c in competencies)
+							@if (lastReviewedEvaluation.ReviewedResult.HasValue)
 							{
-								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
-								var count = evs.Count();
-								var sum = evs.Sum(ev => ev.ReviewValue);
-								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
+								foreach (int? c in competencies)
+								 {
+									 IEnumerable<EvaluationValue> evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
+									 int count = evs.Count();
+									 double? sum = evs.Sum(ev => ev.ReviewValue);
+									 @(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
+								 }
 							}
 						]
 					},
@@ -443,11 +450,11 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(94,216,155,1)",
 						data: [
-							@foreach (var c in competencies)
+							@foreach (int? c in competencies)
 							{
-								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
-								var count = evs.Count();
-								var sum = evs.Sum(ev => (ev.ReviewValue + ev.ManagerValue)/2);
+								IEnumerable<EvaluationValue> evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
+								int count = evs.Count();
+								double? sum = evs.Sum(ev => ev.GetAvg());
 								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
 							}
 						]
@@ -461,11 +468,11 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(100,55,132,1)",
 						data: [
-							@foreach (var c in competencies)
+							@foreach (int? c in competencies)
 							{
-								var evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
-								var count = evs.Count();
-								var sum = evs.Sum(ev => ev.Value);
+								IEnumerable<EvaluationValue> evs = lastReviewedEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
+								int count = evs.Count();
+								double? sum = evs.Sum(ev => ev.Value);
 								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
 							}
 						]
@@ -474,7 +481,7 @@
 
 			};
 
-			$(document).ready(function () {
+			$(document).ready(function() {
 				var ctx = document.getElementById("chart");
 				new Chart(ctx, {
 					type: "radar",
@@ -497,7 +504,7 @@
 	{
 		<script type="text/javascript">
 			var devChartData = {
-				labels: [@string.Join(", ", Enumerable.Range(1, evaluationsForDevChart.Count).Select(s=>s.ToString()))],
+				labels: [@string.Join(", ", Enumerable.Range(1, evaluationsForDevChart.Count).Select(s => s.ToString()))],
 
 				datasets: [
 					{
@@ -515,34 +522,37 @@
 						],
 						borderWidth: 1,
 						data: [
-							@string.Join(", ", evaluationsForDevChart.Select(s=>s.GetPercent().Value.ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-GB"))))
+							@string.Join(", ", evaluationsForDevChart.Select(s => s.GetPercent().Value.ToString(CultureInfo.CreateSpecificCulture("en-GB"))))
 						],
 					}
 				]
 			};
 
-			$(document).ready(function () {
+			$(document).ready(function() {
 				var ctx = document.getElementById("over-time-chart");
 				new Chart(ctx, {
 					type: "line",
 
 					data: devChartData,
 					options: {
-
 						legend: {
 							display: false,
 						},
 						scales: {
-							xAxes: [{
-								stacked: true,
-
-							}],
-							yAxes: [{
-								stacked: true,
-								ticks: {
+							xAxes: [
+								{
+									stacked: true,
 
 								}
-							}]
+							],
+							yAxes: [
+								{
+									stacked: true,
+									ticks: {
+									
+									}
+								}
+							]
 						}
 					}
 				});
@@ -550,12 +560,12 @@
 		</script>
 	}
 
-@if (lastReviewedProfEvaluation != null)
+	@if (lastReviewedProfEvaluation != null)
 	{
-	<script type="text/javascript">
+		<script type="text/javascript">
 			var dataProf = {
 				labels: [
-					@foreach (var c in profCompetencies)
+					@foreach (int? c in profCompetencies)
 					{
 						@Html.Raw('"' + profCompetencyList.FirstOrDefault(cl => cl.Id == c).Title + "\",")
 					}
@@ -570,12 +580,16 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(179,181,198,1)",
 						data: [
-							@foreach (var c in profCompetencies)
+							@if (lastReviewedEvaluation.ManagerResult.HasValue)
 							{
-								var evs = lastReviewedProfEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
-								var count = evs.Count();
-								var sum = evs.Sum(ev => ev.ManagerValue);
-								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
+
+								foreach (int? c in profCompetencies)
+								 {
+									 IEnumerable<ProfEvaluationValue> evs = lastReviewedProfEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
+									 int count = evs.Count();
+									 double? sum = evs.Sum(ev => ev.ManagerValue);
+									 @(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
+								 }
 							}
 						]
 					},
@@ -588,12 +602,16 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(255,99,132,1)",
 						data: [
-							@foreach (var c in profCompetencies)
+							@if (lastReviewedEvaluation.ReviewedResult.HasValue)
 							{
-								var evs = lastReviewedProfEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
-								var count = evs.Count();
-								var sum = evs.Sum(ev => ev.ReviewValue);
-								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
+
+								foreach (int? c in profCompetencies)
+								 {
+									 IEnumerable<ProfEvaluationValue> evs = lastReviewedProfEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
+									 int count = evs.Count();
+									 double? sum = evs.Sum(ev => ev.ReviewValue);
+									 @(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
+								 }
 							}
 						]
 					},
@@ -606,11 +624,11 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(94,216,155,1)",
 						data: [
-							@foreach (var c in profCompetencies)
+							@foreach (int? c in profCompetencies)
 							{
-								var evs = lastReviewedProfEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
-								var count = evs.Count();
-								var sum = evs.Sum(ev => (ev.ReviewValue + ev.ManagerValue)/2);
+								IEnumerable<ProfEvaluationValue> evs = lastReviewedProfEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
+								int count = evs.Count();
+								double? sum = evs.Sum(ev => ev.GetAvg());
 								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
 							}
 						]
@@ -624,11 +642,11 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(100,55,132,1)",
 						data: [
-							@foreach (var c in profCompetencies)
+							@foreach (int? c in profCompetencies)
 							{
-								var evs = lastReviewedProfEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
-								var count = evs.Count();
-								var sum = evs.Sum(ev => ev.Value);
+								IEnumerable<ProfEvaluationValue> evs = lastReviewedProfEvaluation.EvaluationValues.Where(ev => ev.Competency == c);
+								int count = evs.Count();
+								double? sum = evs.Sum(ev => ev.Value);
 								@(((sum - count)*120/(count*2)).ToString().Replace(',', '.') + ", ")
 							}
 						]
@@ -637,7 +655,7 @@
 
 			};
 
-			$(document).ready(function () {
+			$(document).ready(function() {
 				var ctx = document.getElementById("chart-prof");
 				new Chart(ctx, {
 					type: "radar",
@@ -653,14 +671,14 @@
 					}
 				});
 			});
-	</script>
+		</script>
 	}
 
-@if (evaluationsForDevChart != null && evaluationsForDevChart.Any())
+	@if (evaluationsForDevChart != null && evaluationsForDevChart.Any())
 	{
-	<script type="text/javascript">
+		<script type="text/javascript">
 			var devChartDataProf = {
-				labels: [@string.Join(", ", Enumerable.Range(1, profEvaluationsForDevChart.Count).Select(s=>s.ToString()))],
+				labels: [@string.Join(", ", Enumerable.Range(1, profEvaluationsForDevChart.Count).Select(s => s.ToString()))],
 
 				datasets: [
 					{
@@ -678,38 +696,41 @@
 						],
 						borderWidth: 1,
 						data: [
-							@string.Join(", ", profEvaluationsForDevChart.Select(s=>s.GetPercent().Value.ToString(System.Globalization.CultureInfo.CreateSpecificCulture("en-GB"))))
+							@string.Join(", ", profEvaluationsForDevChart.Select(s => s.GetPercent().Value.ToString(CultureInfo.CreateSpecificCulture("en-GB"))))
 						],
 					}
 				]
 			};
 
-			$(document).ready(function () {
+			$(document).ready(function() {
 				var ctx = document.getElementById("over-time-chart-prof");
 				new Chart(ctx, {
 					type: "line",
 
 					data: devChartDataProf,
 					options: {
-
 						legend: {
 							display: false,
 						},
 						scales: {
-							xAxes: [{
-								stacked: true,
-
-							}],
-							yAxes: [{
-								stacked: true,
-								ticks: {
+							xAxes: [
+								{
+									stacked: true,
 
 								}
-							}]
+							],
+							yAxes: [
+								{
+									stacked: true,
+									ticks: {
+									
+									}
+								}
+							]
 						}
 					}
 				});
 			});
-	</script>
+		</script>
 	}
 }
