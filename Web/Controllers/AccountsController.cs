@@ -143,7 +143,7 @@
 
 			if (currentAccount.Role == Role.AdministrativeManager)
 			{
-				accounts = accounts.Where(a => a.AdministrativeManager.Id == currentAccount.Id);
+				accounts = accounts.Where(a => a.AdministrativeManager.Id == currentAccount.Id || a.Manager.Id == currentAccount.Id);
 			}
 
 			// =======================     Сортировки      =============================
