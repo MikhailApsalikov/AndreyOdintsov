@@ -580,7 +580,7 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(179,181,198,1)",
 						data: [
-							@if (lastReviewedEvaluation.ManagerResult.HasValue)
+							@if (lastReviewedEvaluation?.ManagerResult.HasValue ?? false)
 							{
 
 								foreach (int? c in profCompetencies)
@@ -602,7 +602,7 @@
 						pointHoverBackgroundColor: "#fff",
 						pointHoverBorderColor: "rgba(255,99,132,1)",
 						data: [
-							@if (lastReviewedEvaluation.ReviewedResult.HasValue)
+							@if (lastReviewedEvaluation?.ReviewedResult.HasValue ?? false)
 							{
 
 								foreach (int? c in profCompetencies)

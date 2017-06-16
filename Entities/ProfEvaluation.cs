@@ -23,7 +23,7 @@
 		/// <summary>
 		/// Функциональный
 		/// </summary>
-		public int? ExaminerId { get; set; }
+		public int? ExaminierId { get; set; }
 		public double? ReviewedResult { get; set; }
 		public int? IndicatorsCount { get; set; }
 		/// <summary>

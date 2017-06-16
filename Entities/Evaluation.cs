@@ -23,7 +23,7 @@
 		/// <summary>
 		/// Функциональный
 		/// </summary>
-		public int? ExaminerId { get; set; }
+		public int? ExaminierId { get; set; }
 		public double? ReviewedResult { get; set; }
 		public int? IndicatorsCount { get; set; }
 		/// <summary>
@@ -40,6 +40,7 @@
 		public virtual Account Manager { get; set; }
 
 		public virtual Account Examinee { get; set; }
+ 
 		public virtual Account Examinier { get; set; }
 
 		[SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

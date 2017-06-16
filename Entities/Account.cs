@@ -56,6 +56,7 @@
 		public virtual ICollection<Evaluation> Evaluations { get; set; }
 		public virtual ICollection<Evaluation> EvaluationsReviews { get; set; }
 		public virtual ICollection<Evaluation> EvaluationsManages { get; set; }
+
 		public virtual ICollection<Account> Team { get; set; }
 
 		public virtual ICollection<ProfEvaluation> ProfEvaluations { get; set; }
