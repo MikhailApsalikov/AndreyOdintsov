@@ -14,7 +14,7 @@
 		{
 			FilterConfig.Configure(GlobalFilters.Filters);
 			RouteConfig.Configure(RouteTable.Routes);
-			Database.SetInitializer(new TestDataInitializer());
+			Database.SetInitializer(new ProdDataInitializer());
 		}
 
 		protected void Session_Start(object sender, EventArgs e)
